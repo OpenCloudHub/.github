@@ -41,22 +41,20 @@
 <details>
   <summary>📑 Table of Contents</summary>
   <ol>
-    <li><a href="#-about-the-template">About The Template</a></li>
-    <li><a href="#-using-this-template">Using This Template</a></li>
-    <li><a href="#-template-features">Template Features</a></li>
-    <li><a href="#-customization-checklist">Customization Checklist</a></li>
-    <li><a href="#-architecture">Architecture</a></li>
-    <li><a href="#-getting-started">Getting Started</a></li>
-    <li><a href="#-project-structure">Project Structure</a></li>
-    <li><a href="#-contributing">Contributing</a></li>
-    <li><a href="#-license">License</a></li>
-    <li><a href="#-contact">Contact</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#getting-started">Getting Started</a></li>
+    <li><a href="#project-structure">Project Structure</a></li>
+    <li><a href="#contributing">Contributing</a></li>
+    <li><a href="#license">License</a></li>
+    <li><a href="#contact">Contact</a></li>
+    <li><a href="#acknowledgements">Acknowledgements</a></li>
   </ol>
 </details>
 
+
 <!-- FEATURES -->
 
-## ✨ Features
+<h2 id="features">✨ Features</h2>
 
 - Branded organization README layout
 - Pre-filled sections and file structure
@@ -66,7 +64,7 @@
 
 <!-- GETTING STARTED -->
 
-## 🚀 Getting Started
+<h2 id="getting-started">🚀 Getting Started</h2>
 
 ### Prerequisites
 
@@ -84,7 +82,7 @@
 
 <!-- PROJECT STRUCTURE -->
 
-## 📁 Project Structure
+<h2 id="project-structure">📁 Project Structure</h2>
 
 ```
 .
@@ -111,7 +109,8 @@
 
 <!-- CONTRIBUTING -->
 
-## 👥 Contributing
+
+<h2 id="contributing">👥 Contributing</h2>
 
 Contributions are welcome! This template is designed to make contribution as smooth as possible with templates and guidelines.
 
@@ -121,7 +120,7 @@ Please see our [Contributing Guidelines](../.github/CONTRIBUTING.md) and [Code o
 
 <!-- LICENSE -->
 
-## 📄 License
+<h2 id="license">📄 License</h2>
 
 Distributed under the Apache 2.0 License. See [LICENSE](/LICENSE) for more information.
 
@@ -129,7 +128,7 @@ Distributed under the Apache 2.0 License. See [LICENSE](/LICENSE) for more infor
 
 <!-- CONTACT -->
 
-## 📬 Contact
+<h2 id="contact">📬 Contact</h2>
 
 Organization Link: [https://github.com/OpenCloudHub](https://github.com/OpenCloudHub)
 
@@ -137,7 +136,7 @@ Organization Link: [https://github.com/OpenCloudHub](https://github.com/OpenClou
 
 <!-- ACKNOWLEDGEMENTS -->
 
-## 🙏 Acknowledgements
+<h2 id="acknowledgements">🙏 Acknowledgements</h2>
 
 Share links or refrences to useful resources:
 
