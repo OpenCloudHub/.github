@@ -33,8 +33,8 @@ OpenCloudHub is a research-driven MLOps platform being developed as part of a ma
 - 📚 How do we bridge the gap between local academic research and industry practices?
 
 **ML Workloads We're Building For:**
-- 🤖 **Classical ML:** Predictive models using scikit-learn, XGBoost
-- 🧠 **Generative AI:** Fine-tuning BERT, Qwen, and other transformer models
+- 🤖 **Classical ML:** Predictive models using scikit-learn
+- 🧠 **Generative AI:** Fine-tuning BERT, Qwen, and other transformer models and llms
 - 🔄 **End-to-End Pipelines:** From data ingestion to model serving
 
 ---
@@ -105,30 +105,38 @@ OpenCloudHub is a research-driven MLOps platform being developed as part of a ma
 <h2 id="repositories">📂 Project Structure</h2>
 
 
-<h3>🛠️ Platform Team</h3>
-<ul>
-  <li><a href="https://github.com/opencloudhub/.github">.github</a> – Shared org templates and workflows</li>
-  <li><a href="https://github.com/opencloudhub/github-management">github-management</a> – Org automation with Terraform</li>
-  <li><a href="https://github.com/opencloudhub/docs">docs</a> – Comprehensive documentation website</li>
-  <li><a href="https://github.com/opencloudhub/infra-modules">infra-modules</a> – Reusable Terraform modules</li>
-  <li><a href="https://github.com/opencloudhub/infra-live">infra-live</a> – Live infrastructure with Terragrunt</li>
-  <li><a href="https://github.com/opencloudhub/gitops">gitops</a> – Argo CD apps and configs</li>
-  <li><a href="https://github.com/opencloudhub/gh-actions-local-runner">gh-actions-local-runner</a> – Local runner utility for GH Actions</li>
-</ul>
+<details open>
+  <summary><strong>🛠️ Platform Team</strong></summary>
+  <ul>
+    <li><a href="https://github.com/opencloudhub/.github">.github</a> – Shared org templates and workflows</li>
+    <li><a href="https://github.com/opencloudhub/github-management">github-management</a> – Org automation with Terraform</li>
+    <li><a href="https://github.com/opencloudhub/docs">docs</a> – Comprehensive documentation website</li>
+    <li><a href="https://github.com/opencloudhub/infra-modules">infra-modules</a> – Reusable Terraform modules</li>
+    <li><a href="https://github.com/opencloudhub/infra-live">infra-live</a> – Live infrastructure with Terragrunt</li>
+    <li><a href="https://github.com/opencloudhub/gitops">gitops</a> – Argo CD apps and configs</li>
+    <li><a href="https://github.com/opencloudhub/gh-actions-local-runner">gh-actions-local-runner</a> – Local runner utility for GH Actions</li>
+  </ul>
+</details>
 
-<h3>🧠 AI Team</h3>
-<ul>
-  <li><a href="https://github.com/opencloudhub/ai-ml-demo">ai-ml-demo</a> – Classical ML pipeline examples</li>
-  <li><a href="https://github.com/opencloudhub/ai-bert-demo">ai-bert-demo</a> – BERT fine-tuning workflows</li>
-  <li><a href="https://github.com/opencloudhub/ai-qwen-demo">ai-qwen-demo</a> – Qwen model experimentation</li>
-</ul>
+<details>
+  <summary><strong>🧠 AI Team</strong></summary>
+  <ul>
+    <li><a href="https://github.com/opencloudhub/ai-ml-demo">ai-ml-demo</a> – Classical ML pipeline examples</li>
+    <li><a href="https://github.com/opencloudhub/ai-bert-demo">ai-bert-demo</a> – BERT fine-tuning workflows</li>
+    <li><a href="https://github.com/opencloudhub/ai-qwen-demo">ai-qwen-demo</a> – Qwen model experimentation</li>
+  </ul>
+</details>
 
-<h3>🌐 Application Team</h3>
-<ul>
-  <li><a href="https://github.com/opencloudhub/demo-app-frontend">demo-app-frontend</a> – React dashboard for model interactions</li>
-  <li><a href="https://github.com/opencloudhub/demo-app-backend">demo-app-backend</a> – FastAPI backend with model integration</li>
-  <li><a href="https://github.com/opencloudhub/landing-page">landing-page</a> – Org landing page</li>
-</ul>
+<details>
+  <summary><strong>🌐 Application Team</strong></summary>
+  <ul>
+    <li><a href="https://github.com/opencloudhub/demo-app-frontend">demo-app-frontend</a> – React dashboard for model interactions</li>
+    <li><a href="https://github.com/opencloudhub/demo-app-backend">demo-app-backend</a> – FastAPI backend with model integration</li>
+    <li><a href="https://github.com/opencloudhub/landing-page">landing-page</a> – Org landing page</li>
+  </ul>
+</details>
+
+
 
 
 ---
