@@ -47,8 +47,7 @@ body:
         - infra
         - gitops
         - cicd
-        - ml-platform
-        - ml-serving
+        - ai-platform
         - ai-models
         - security
         - observability
