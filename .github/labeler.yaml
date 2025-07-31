@@ -1,0 +1,103 @@
+# Labels for configuration files
+"config/**/*":
+  - 🛠️ config
+
+# Labels for data-related files
+"data/**/*":
+  - 📊 data
+
+# Labels for Docker-related files
+"Dockerfile":
+  - 🐳 docker
+"docker-compose.yml":
+  - 🐳 docker
+
+# Labels for version control and project management files
+".github/**/*":
+  - 🤖 github
+".gitignore":
+  - 🔧 vcs
+".gitattributes":
+  - 🔧 vcs
+
+# Labels for DVC-related files
+"dvc.*":
+  - 💾 dvc
+"params.yaml":
+  - 💾 dvc
+
+# Labels for notebooks
+"notebooks/**/*":
+  - 📓 notebook
+"*.ipynb":
+  - 📓 notebook
+
+# Labels for script files
+"scripts/**/*":
+  - 📜 script
+"*.sh":
+  - 📜 script
+"*.py":
+  - 💻 src
+
+# Labels for source code
+"src/**/*":
+  - 💻 src
+
+# Labels for tests
+"tests/**/*":
+  - 🧪 tests
+"*_test.py":
+  - 🧪 tests
+"test_*.py":
+  - 🧪 tests
+
+# Labels for documentation files
+"*.md":
+  - 📚 documentation
+"docs/**/*":
+  - 📚 documentation
+
+# Labels for configuration files
+"*.yaml":
+  - ⚙️ configuration
+"*.yml":
+  - ⚙️ configuration
+"*.ini":
+  - ⚙️ configuration
+"*.toml":
+  - ⚙️ configuration
+
+# Labels for dependency management files
+"poetry.lock":
+  - 📦 dependencies
+"pyproject.toml":
+  - 📦 dependencies
+"requirements.txt":
+  - 📦 dependencies
+"setup.py":
+  - 📦 dependencies
+
+# Labels for build-related files
+"Makefile":
+  - 🏗️ build
+"CMakeLists.txt":
+  - 🏗️ build
+
+# Labels for CI/CD files
+".github/workflows/*.yml":
+  - 🚀 ci-cd
+
+# Labels for license and community files
+"LICENSE":
+  - 📄 legal
+"CONTRIBUTING.md":
+  - 📄 community
+"CODE_OF_CONDUCT.md":
+  - 📄 community
+"SECURITY.md":
+  - 📄 community
+
+# Labels for READMEs
+"README*":
+  - 📖 readme
