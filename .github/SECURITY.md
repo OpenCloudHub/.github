@@ -9,7 +9,7 @@ We take the security of our project seriously. If you believe you've found a sec
 
 1. **DO NOT** disclose the vulnerability publicly
 2. To report a security issue, please use the GitHub Security Advisory feature:  
-   👉 [Report a Vulnerability](./security/advisories/new)
+   👉 [Report a Vulnerability](../../security/advisories/new)
 
 ### ⏱️ What to Expect
 
