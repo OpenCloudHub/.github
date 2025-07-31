@@ -1,4 +1,4 @@
-name: Documentation
+name: 📝 Documentation
 description: Create, update, or improve documentation
 title: "[DOCS] "
 labels: ["type: documentation"]
@@ -47,8 +47,7 @@ body:
         - infra
         - gitops
         - cicd
-        - ml-platform
-        - ml-serving
+        - ai-serving
         - ai-models
         - security
         - observability

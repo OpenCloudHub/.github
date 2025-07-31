@@ -1,4 +1,4 @@
-name: Epic
+name: 🏛️ Epic
 description: Large work packages that span multiple features and possibly milestones
 title: "[EPIC] "
 labels: ["type: epic"]
@@ -9,19 +9,6 @@ body:
       label: Epic Title
       description: Clear, concise title for this epic
       placeholder: "e.g., MLOps Core Platform, Infrastructure Foundation"
-    validations:
-      required: true
-
-  - type: dropdown
-    id: team
-    attributes:
-      label: Owning Team
-      description: Which team is primarily responsible for this epic?
-      options:
-        - platform
-        - ai
-        - app
-        - thesis
     validations:
       required: true
 
@@ -37,18 +24,6 @@ body:
         - low
     validations:
       required: true
-
-  - type: checkboxes
-    id: milestones
-    attributes:
-      label: Related Milestones
-      description: Which milestones does this epic contribute to?
-      options:
-        - label: Foundation (Mid-August)
-        - label: MLOps MVP (Mid-September)
-        - label: Advanced ML & Security (Mid-October)
-        - label: Production Ready (Mid-November)
-        - label: Thesis Submission (December 1st)
 
   - type: textarea
     id: problem_statement

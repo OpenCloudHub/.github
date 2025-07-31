@@ -1,4 +1,4 @@
-name: Task
+name: 📌 Task
 description: Specific implementation work or technical activities
 title: "[TASK] "
 labels: ["type: task"]

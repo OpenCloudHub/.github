@@ -1,4 +1,4 @@
-name: Bug
+name: 🐞 Bug
 description: Something is broken or not working as expected
 title: "[BUG] "
 labels: ["type: bug"]
@@ -47,8 +47,7 @@ body:
         - infra
         - gitops
         - cicd
-        - ml-platform
-        - ml-serving
+        - ai-serving
         - ai-models
         - security
         - observability
