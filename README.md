@@ -4,7 +4,7 @@
 
 <div align="center">
   <a href="https://github.com/opencloudhub">
-    <img src="https://raw.githubusercontent.com/opencloudhub/.github/main/brand/assets/logos/primary-logo-light-background.svg" alt="OpenCloudHub Logo" width="100%" style="max-width:320px;" height="160">
+    <img src="https://raw.githubusercontent.com/opencloudhub/.github/main/references/brand/assets/logos/primary-logo-light-background.svg" alt="OpenCloudHub Logo" width="100%" style="max-width:320px;" height="160">
   </a>
 
   <h1 align="center">GitHub Standards & Templates</h1>

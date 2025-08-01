@@ -1,6 +1,6 @@
 <div align="center">
   <a href="https://github.com/opencloudhub">
-    <img src="https://raw.githubusercontent.com/opencloudhub/.github/main/brand/assets/logos/primary-logo-light-background.svg" alt="OpenCloudHub Logo" width="100%" style="max-width:400px;" height="200">
+    <img src="https://raw.githubusercontent.com/opencloudhub/.github/main/references/brand/assets/logos/primary-logo-light-background.svg" alt="OpenCloudHub Logo" width="100%" style="max-width:400px;" height="200">
   </a>
   <h1>🚀 Modern Cloud-Native Platform Engineering</h1>
   <p>
