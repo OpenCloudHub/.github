@@ -146,7 +146,7 @@ OpenCloudHub is a research-driven MLOps platform being developed as part of a ma
 ### 📚 For Researchers & Students
 - **[📖 Full Documentation](https://opencloudhub.github.io/docs)** - Detailed setup guides and architectural decisions
 - **[🎯 Local Development](https://opencloudhub.github.io/docs/getting-started/local-setup)** - Deploy the platform on your machine
-- **[📋 Project Roadmap](https://github.com/orgs/opencloudhub/projects/1)** - See what's coming next
+- **[📋 Project Roadmap](https://github.com/orgs/opencloudhub/projects/4)** - See what's coming next
 
 ### 🔍 For Platform Engineers
 - **Explore Implementation Details:** Browse the repositories above to see real-world GitOps and IaC patterns
@@ -194,7 +194,7 @@ kubectl port-forward -n mlflow svc/mlflow-server 5000:5000
     <a href="https://github.com/orgs/opencloudhub/discussions">
       <img src="https://img.shields.io/badge/Join%20Discussion-181717?style=for-the-badge&logo=github&logoColor=white" alt="Discussions">
     </a>
-    <a href="https://github.com/orgs/opencloudhub/projects/1">
+    <a href="https://github.com/orgs/opencloudhub/projects/4">
       <img src="https://img.shields.io/badge/View%20Roadmap-0052CC?style=for-the-badge&logo=jira&logoColor=white" alt="Roadmap">
     </a>
   </div>
