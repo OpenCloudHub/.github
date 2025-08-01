@@ -114,7 +114,7 @@
 
 Contributions are welcome! This template is designed to make contribution as smooth as possible with templates and guidelines.
 
-Please see our [Contributing Guidelines](../.github/CONTRIBUTING.md) and [Code of Conduct](../.github/CODE_OF_CONDUCT.md) for more details.
+Please see our [Contributing Guidelines](/CONTRIBUTING.md) and [Code of Conduct](/CODE_OF_CONDUCT.md) for more details.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
