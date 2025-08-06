@@ -1,0 +1,175 @@
+name: 🐞 Bug
+description: Something is broken or not working as expected
+title: "[BUG] "
+labels: ["type: bug"]
+body:
+  - type: input
+    id: bug_title
+    attributes:
+      label: Bug Title
+      description: Clear, descriptive title of the issue
+      placeholder: "e.g., ArgoCD sync fails with certificate error"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: team
+    attributes:
+      label: Affected Team
+      description: Which team's area is affected by this bug?
+      options:
+        - platform
+        - ai
+        - app
+        - thesis
+    validations:
+      required: true
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      description: How severe is this bug?
+      options:
+        - critical (System down, blocking progress)
+        - high (Major functionality broken)
+        - medium (Functionality impaired)
+        - low (Minor issue, workaround available)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: Affected Component
+      description: Which system component has the bug?
+      options:
+        - infra
+        - gitops
+        - cicd
+        - ai-platform
+        - ai-models
+        - security
+        - observability
+        - storage
+        - demo-app
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: A clear and concise description of what the bug is
+      placeholder: "Describe what is happening that should not be happening..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected_behavior
+    attributes:
+      label: Expected Behavior
+      description: What should happen instead?
+      placeholder: "Describe what you expected to happen..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual_behavior
+    attributes:
+      label: Actual Behavior
+      description: What is actually happening?
+      placeholder: "Describe what is actually happening..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction_steps
+    attributes:
+      label: Steps to Reproduce
+      description: How can someone else reproduce this bug?
+      placeholder: |
+        1. Go to '...'
+        2. Click on '...'
+        3. Run command '...'
+        4. See error
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment Details
+      description: Information about your environment
+      placeholder: |
+        - OS: [e.g., macOS 13.4, Ubuntu 22.04]
+        - Kubernetes: [e.g., kind v0.20.0, K8s 1.27]
+        - Component versions: [e.g., ArgoCD v2.8.0, Istio 1.18]
+        - Browser: [if relevant]
+    validations:
+      required: true
+
+  - type: textarea
+    id: error_logs
+    attributes:
+      label: Error Messages/Logs
+      description: Any error messages or relevant log entries
+      placeholder: |
+        ```
+        Paste error messages or log entries here
+        ```
+    validations:
+      required: false
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots
+      description: If applicable, add screenshots to help explain the problem
+      placeholder: "Attach screenshots by dragging and dropping or paste them here"
+    validations:
+      required: false
+
+  - type: textarea
+    id: workaround
+    attributes:
+      label: Workaround
+      description: Is there a temporary workaround for this issue?
+      placeholder: "If you found a temporary solution, describe it here..."
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: impact
+    attributes:
+      label: Impact
+      description: What is affected by this bug?
+      options:
+        - label: Blocks development progress
+        - label: Breaks existing functionality
+        - label: Prevents deployment
+        - label: Affects user experience
+        - label: Security implications
+        - label: Data loss risk
+
+  - type: textarea
+    id: investigation_notes
+    attributes:
+      label: Investigation Notes
+      description: Any initial investigation or troubleshooting already done
+      placeholder: |
+        - Checked logs: [what you found]
+        - Tested configurations: [what you tried]
+        - Possible root cause: [your theory]
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional_context
+    attributes:
+      label: Additional Context
+      description: Any other context about the problem
+      placeholder: |
+        - When did this start happening?
+        - Related changes or deployments?
+        - Similar issues: #123, #456
