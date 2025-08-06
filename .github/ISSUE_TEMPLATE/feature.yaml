@@ -4,15 +4,6 @@ title: "[FEATURE] "
 labels: ["type:feature"]
 type: "Feature"
 body:
-  - type: input
-    id: feature_title
-    attributes:
-      label: Feature Title
-      description: Clear, user-focused title for this feature
-      placeholder: "e.g., MLflow Model Registry, ArgoCD ApplicationSets"
-    validations:
-      required: true
-
   - type: textarea
     id: user_story
     attributes:

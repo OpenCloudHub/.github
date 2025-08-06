@@ -4,15 +4,6 @@ title: "[RESEARCH] "
 labels: ["type:research"]
 type: "Research"
 body:
-  - type: input
-    id: research_title
-    attributes:
-      label: Research Title
-      description: Clear title describing what needs to be researched
-      placeholder: "e.g., Evaluate BERT vs DistilBERT for text classification"
-    validations:
-      required: true
-
   - type: textarea
     id: research_question
     attributes:
