@@ -1,0 +1,152 @@
+name: 🧩 Feature
+description: User-facing functionality or significant component implementation
+title: "[FEATURE] "
+labels: ["type: feature"]
+body:
+  - type: input
+    id: feature_title
+    attributes:
+      label: Feature Title
+      description: Clear, user-focused title for this feature
+      placeholder: "e.g., MLflow Model Registry, ArgoCD ApplicationSets"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: team
+    attributes:
+      label: Owning Team
+      description: Which team will implement this feature?
+      options:
+        - platform
+        - ai
+        - app
+        - thesis
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How important is this feature?
+      options:
+        - critical
+        - high
+        - medium
+        - low
+    validations:
+      required: true
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: Component
+      description: Which system component does this feature belong to?
+      options:
+        - infra
+        - gitops
+        - cicd
+        - ai-platform
+        - ai-models
+        - security
+        - observability
+        - storage
+        - demo-app
+    validations:
+      required: true
+
+  - type: input
+    id: parent_epic
+    attributes:
+      label: Parent Epic
+      description: Which epic does this feature belong to?
+      placeholder: "e.g., #123 (Epic: MLOps Core Platform)"
+    validations:
+      required: false
+
+  - type: textarea
+    id: user_story
+    attributes:
+      label: User Story
+      description: As a [user type], I want [functionality] so that [benefit]
+      placeholder: |
+        As a data scientist, I want to register my trained models in MLflow so that I can version and deploy them consistently.
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: Acceptance Criteria
+      description: Specific, testable conditions that must be met
+      placeholder: |
+        - [ ] Given [context], when [action], then [outcome]
+        - [ ] Feature works in local kind cluster
+        - [ ] Configuration is managed via GitOps
+        - [ ] Basic monitoring/logging is in place
+        - [ ] Documentation is updated
+    validations:
+      required: true
+
+  - type: textarea
+    id: technical_requirements
+    attributes:
+      label: Technical Requirements
+      description: Technical specifications and constraints
+      placeholder: |
+        - Must integrate with existing Istio mesh
+        - Should use Helm charts for deployment
+        - Requires persistent storage
+        - Must support RBAC
+    validations:
+      required: false
+
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies
+      description: What must be completed before this feature can start?
+      placeholder: |
+        - Feature: #456 (Basic cluster setup)
+        - Task: #789 (Storage configuration)
+        - External: Docker registry access
+    validations:
+      required: false
+
+  - type: dropdown
+    id: size_estimate
+    attributes:
+      label: Size Estimate
+      description: Rough development effort estimate
+      options:
+        - XS (< 1 day)
+        - S (1-3 days)
+        - M (3-5 days)
+        - L (1-2 weeks)
+        - XL (2+ weeks)
+    validations:
+      required: true
+
+  - type: textarea
+    id: testing_approach
+    attributes:
+      label: Testing Approach
+      description: How will this feature be tested?
+      placeholder: |
+        - Unit tests for core logic
+        - Integration tests with [component]
+        - Manual testing scenarios
+        - Performance/load considerations
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional_context
+    attributes:
+      label: Additional Context
+      description: Screenshots, mockups, links, or other relevant information
+      placeholder: |
+        - Design mockups: [link]
+        - API documentation: [link]
+        - Related research: [link]

@@ -1,0 +1,211 @@
+name: 🔬 Research
+description: Investigation, analysis, or knowledge gathering needed
+title: "[RESEARCH] "
+labels: ["type: research"]
+body:
+  - type: input
+    id: research_title
+    attributes:
+      label: Research Title
+      description: Clear title describing what needs to be researched
+      placeholder: "e.g., Evaluate BERT vs DistilBERT for text classification"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: team
+    attributes:
+      label: Research Team
+      description: Which team will conduct this research?
+      options:
+        - platform
+        - ai
+        - app
+        - thesis
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How urgent is this research?
+      options:
+        - critical (Blocking other work)
+        - high (Needed for near-term decisions)
+        - medium (Important for planning)
+        - low (Nice to know)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: Related Component
+      description: Which system component does this research relate to?
+      options:
+        - infra
+        - gitops
+        - cicd
+        - ai-platform
+        - ai-models
+        - security
+        - observability
+        - storage
+        - demo-app
+        - general
+    validations:
+      required: true
+
+  - type: textarea
+    id: research_question
+    attributes:
+      label: Research Question
+      description: What specific question(s) need to be answered?
+      placeholder: |
+        Primary question: [main question to answer]
+        Secondary questions:
+        - [related question 1]
+        - [related question 2]
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context & Background
+      description: Why is this research needed? What's the current situation?
+      placeholder: |
+        Background: [current state of knowledge]
+        Problem: [what we don't know that we need to know]
+        Impact: [how this affects the project]
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: Research Scope
+      description: What should be included and excluded from this research?
+      placeholder: |
+        In Scope:
+        - [specific areas to investigate]
+        - [tools/technologies to evaluate]
+        
+        Out of Scope:
+        - [what not to include]
+        - [areas for future research]
+    validations:
+      required: true
+
+  - type: textarea
+    id: success_criteria
+    attributes:
+      label: Success Criteria
+      description: How will we know the research is complete and successful?
+      placeholder: |
+        - [ ] Question X is answered with sufficient confidence
+        - [ ] Recommendations are documented with rationale
+        - [ ] Proof-of-concept is implemented (if applicable)
+        - [ ] Findings are presented to relevant stakeholders
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: research_type
+    attributes:
+      label: Research Type
+      description: What kind of research is needed?
+      options:
+        - label: Technology evaluation/comparison
+        - label: Architecture design/patterns
+        - label: Performance analysis/benchmarking
+        - label: Security assessment
+        - label: Literature review
+        - label: Proof-of-concept development
+        - label: User research/requirements
+        - label: Market/tool analysis
+
+  - type: textarea
+    id: methodology
+    attributes:
+      label: Research Methodology
+      description: How will this research be conducted?
+      placeholder: |
+        Approach:
+        1. [step 1: e.g., literature review]
+        2. [step 2: e.g., hands-on testing]
+        3. [step 3: e.g., performance comparison]
+        
+        Tools/Resources:
+        - [documentation to review]
+        - [tools to test]
+        - [experts to consult]
+    validations:
+      required: false
+
+  - type: textarea
+    id: deliverables
+    attributes:
+      label: Expected Deliverables
+      description: What outputs should this research produce?
+      placeholder: |
+        - Research report with findings and recommendations
+        - Comparison matrix/decision framework
+        - Proof-of-concept implementation
+        - Updated architecture documentation
+        - Presentation of findings
+    validations:
+      required: true
+
+  - type: dropdown
+    id: estimated_effort
+    attributes:
+      label: Estimated Effort
+      description: How much time is expected for this research?
+      options:
+        - XS (< 1 day)
+        - S (1-3 days)
+        - M (3-5 days)
+        - L (1-2 weeks)
+        - XL (2+ weeks)
+    validations:
+      required: true
+
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies
+      description: What is needed before this research can begin?
+      placeholder: |
+        - Access to: [systems, tools, data]
+        - Completion of: [other tasks/research]
+        - Input from: [stakeholders, experts]
+    validations:
+      required: false
+
+  - type: textarea
+    id: related_work
+    attributes:
+      label: Related Work
+      description: Links to related issues, previous research, or relevant resources
+      placeholder: |
+        - Related issues: #123, #456
+        - Previous research: [links]
+        - Relevant documentation: [links]
+        - Similar implementations: [examples]
+    validations:
+      required: false
+
+  - type: textarea
+    id: decision_impact
+    attributes:
+      label: Decision Impact
+      description: What decisions will be made based on this research?
+      placeholder: |
+        This research will help decide:
+        - [decision 1: e.g., which model architecture to use]
+        - [decision 2: e.g., infrastructure requirements]
+        - [decision 3: e.g., implementation approach]
+    validations:
+      required: true

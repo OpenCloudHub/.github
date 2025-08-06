@@ -1,0 +1,248 @@
+name: 📝 Documentation
+description: Create, update, or improve documentation
+title: "[DOCS] "
+labels: ["type: documentation"]
+body:
+  - type: input
+    id: doc_title
+    attributes:
+      label: Documentation Title
+      description: Clear title for the documentation work
+      placeholder: "e.g., API Reference for MLflow Integration, Installation Guide"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: team
+    attributes:
+      label: Responsible Team
+      description: Which team will create/maintain this documentation?
+      options:
+        - platform
+        - ai
+        - app
+        - thesis
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How important is this documentation?
+      options:
+        - critical (Required for project completion)
+        - high (Needed for effective work)
+        - medium (Improves efficiency)
+        - low (Nice to have)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: Related Component
+      description: Which system component does this documentation cover?
+      options:
+        - infra
+        - gitops
+        - cicd
+        - ai-platform
+        - ai-models
+        - security
+        - observability
+        - storage
+        - demo-app
+        - general
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: doc_type
+    attributes:
+      label: Documentation Type
+      description: What kind of documentation is needed?
+      options:
+        - label: User Guide/Tutorial
+        - label: API Reference
+        - label: Architecture Documentation
+        - label: Installation/Setup Guide
+        - label: Configuration Reference
+        - label: Troubleshooting Guide
+        - label: Development Guidelines
+        - label: Deployment Instructions
+        - label: Security Guidelines
+        - label: Performance Guidelines
+
+  - type: dropdown
+    id: doc_action
+    attributes:
+      label: Action Required
+      description: What needs to be done?
+      options:
+        - Create new documentation
+        - Update existing documentation
+        - Improve/restructure existing docs
+        - Migrate documentation
+        - Review and validate docs
+    validations:
+      required: true
+
+  - type: textarea
+    id: purpose
+    attributes:
+      label: Purpose & Audience
+      description: Why is this documentation needed and who will use it?
+      placeholder: |
+        Purpose: [what problem this documentation solves]
+        
+        Target Audience:
+        - [primary users: e.g., developers, operators, end users]
+        - [skill level: beginner, intermediate, advanced]
+        - [context: internal team, external contributors, end users]
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope & Content
+      description: What should be covered in this documentation?
+      placeholder: |
+        Topics to Cover:
+        - [topic 1: e.g., installation steps]
+        - [topic 2: e.g., configuration options]
+        - [topic 3: e.g., common use cases]
+        
+        Level of Detail:
+        - [high-level overview, detailed steps, examples]
+    validations:
+      required: true
+
+  - type: textarea
+    id: current_state
+    attributes:
+      label: Current State
+      description: What documentation currently exists (if any)?
+      placeholder: |
+        Existing Documentation:
+        - [location of current docs]
+        - [what's already covered]
+        - [what's missing or outdated]
+        - [quality/accuracy issues]
+    validations:
+      required: false
+
+  - type: textarea
+    id: completion_criteria
+    attributes:
+      label: Completion Criteria
+      description: How will we know this documentation work is done?
+      placeholder: |
+        - [ ] Content is written and accurate
+        - [ ] Examples and code snippets are tested
+        - [ ] Formatting and structure are consistent
+        - [ ] Links and references are working
+        - [ ] Documentation is reviewed by [team/person]
+        - [ ] Published to correct location
+        - [ ] Integrated with existing doc structure
+    validations:
+      required: true
+
+  - type: input
+    id: location
+    attributes:
+      label: Documentation Location
+      description: Where should this documentation be published?
+      placeholder: "e.g., docs/ folder, Wiki, README.md, separate repo"
+    validations:
+      required: false
+
+  - type: dropdown
+    id: format
+    attributes:
+      label: Documentation Format
+      description: What format should be used?
+      options:
+        - Markdown
+        - README file
+        - Wiki pages
+        - API docs (OpenAPI/Swagger)
+        - Confluence/Notion
+        - Code comments
+        - Video/screencast
+    validations:
+      required: true
+
+  - type: textarea
+    id: outline
+    attributes:
+      label: Content Outline
+      description: Rough outline or table of contents
+      placeholder: |
+        1. Overview
+           - What is [component/feature]
+           - When to use it
+        2. Prerequisites
+           - Required knowledge
+           - System requirements
+        3. Step-by-step Guide
+           - [specific steps]
+        4. Examples
+           - Common use cases
+        5. Troubleshooting
+           - Common issues
+        6. References
+           - Related issues: #123, #456d docs, links
+    validations:
+      required: false
+
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies
+      description: What needs to be completed before this documentation can be written?
+      placeholder: |
+        - Feature: #123 (implementation must be complete)
+        - Task: #456 (configuration finalized)
+        - Research: #789 (best practices defined)
+    validations:
+      required: false
+
+  - type: dropdown
+    id: estimated_effort
+    attributes:
+      label: Estimated Effort
+      description: How much time is expected for this documentation work?
+      options:
+        - XS (< 2 hours)
+        - S (2-4 hours)
+        - M (4-8 hours)
+        - L (1-2 days)
+        - XL (2+ days)
+    validations:
+      required: true
+
+  - type: textarea
+    id: maintenance
+    attributes:
+      label: Maintenance Plan
+      description: How will this documentation be kept up to date?
+      placeholder: |
+        - Review frequency: [monthly, quarterly, as needed]
+        - Update triggers: [code changes, new features]
+        - Responsible team: [who maintains it]
+        - Version control: [how changes are tracked]
+    validations:
+      required: false
+
+  - type: textarea
+    id: references
+    attributes:
+      label: References & Resources
+      description: Links to related documentation, examples, or resources
+      placeholder: |
+        - Existing documentation: [links]
+        - Reference implementations: [links]
+        - Style guides: [links]
+        - Relate
