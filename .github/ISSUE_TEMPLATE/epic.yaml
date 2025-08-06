@@ -1,7 +1,8 @@
 name: 🏛️ Epic
 description: High-level technical domains that group related features
 title: "[EPIC] "
-labels: ["type: epic"]
+labels: ["type:epic"]
+type: "Epic"
 body:
   - type: input
     id: epic_title

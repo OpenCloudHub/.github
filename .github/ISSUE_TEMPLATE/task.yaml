@@ -2,6 +2,7 @@ name: 📌 Task
 description: Specific implementation work with clear deliverables
 title: "[TASK] "
 labels: ["type:task"]
+type: "Task"
 body:
   - type: input
     id: task_title

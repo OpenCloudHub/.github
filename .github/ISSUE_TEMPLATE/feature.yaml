@@ -2,6 +2,7 @@ name: 🧩 Feature
 description: User-facing functionality or significant component implementation
 title: "[FEATURE] "
 labels: ["type:feature"]
+type: "Feature"
 body:
   - type: input
     id: feature_title
@@ -65,8 +66,6 @@ body:
         - External: Container registry access
     validations:
       required: false
-
-
 
   - type: textarea
     id: testing_strategy
