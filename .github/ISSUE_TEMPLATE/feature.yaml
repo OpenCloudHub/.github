@@ -1,7 +1,7 @@
 name: 🧩 Feature
 description: User-facing functionality or significant component implementation
 title: "[FEATURE] "
-labels: ["type: feature"]
+labels: ["type:feature"]
 body:
   - type: input
     id: feature_title
@@ -11,59 +11,6 @@ body:
       placeholder: "e.g., MLflow Model Registry, ArgoCD ApplicationSets"
     validations:
       required: true
-
-  - type: dropdown
-    id: team
-    attributes:
-      label: Owning Team
-      description: Which team will implement this feature?
-      options:
-        - platform
-        - ai
-        - app
-        - thesis
-    validations:
-      required: true
-
-  - type: dropdown
-    id: priority
-    attributes:
-      label: Priority
-      description: How important is this feature?
-      options:
-        - critical
-        - high
-        - medium
-        - low
-    validations:
-      required: true
-
-  - type: dropdown
-    id: component
-    attributes:
-      label: Component
-      description: Which system component does this feature belong to?
-      options:
-        - infra
-        - gitops
-        - cicd
-        - ai-platform
-        - ai-models
-        - security
-        - observability
-        - storage
-        - demo-app
-    validations:
-      required: true
-
-  - type: input
-    id: parent_epic
-    attributes:
-      label: Parent Epic
-      description: Which epic does this feature belong to?
-      placeholder: "e.g., #123 (Epic: MLOps Core Platform)"
-    validations:
-      required: false
 
   - type: textarea
     id: user_story
@@ -79,65 +26,58 @@ body:
     id: acceptance_criteria
     attributes:
       label: Acceptance Criteria
-      description: Specific, testable conditions that must be met
+      description: Specific, testable conditions that define feature completion
       placeholder: |
-        - [ ] Given [context], when [action], then [outcome]
-        - [ ] Feature works in local kind cluster
-        - [ ] Configuration is managed via GitOps
-        - [ ] Basic monitoring/logging is in place
-        - [ ] Documentation is updated
+        - [ ] Users can register models with metadata and versioning
+        - [ ] Model artifacts are stored in object storage
+        - [ ] Feature integrates with existing authentication
+        - [ ] Monitoring and logging are functional
+        - [ ] Documentation covers usage scenarios
     validations:
       required: true
 
   - type: textarea
-    id: technical_requirements
+    id: technical_scope
     attributes:
-      label: Technical Requirements
-      description: Technical specifications and constraints
+      label: Technical Scope
+      description: High-level technical components and integrations
       placeholder: |
-        - Must integrate with existing Istio mesh
-        - Should use Helm charts for deployment
-        - Requires persistent storage
-        - Must support RBAC
+        Components:
+        - MLflow server deployment
+        - Database integration
+        - Object storage configuration
+        
+        Integrations:
+        - Istio service mesh
+        - Keycloak authentication
+        - Prometheus monitoring
     validations:
-      required: false
+      required: true
 
   - type: textarea
     id: dependencies
     attributes:
       label: Dependencies
-      description: What must be completed before this feature can start?
+      description: What features or external factors must be ready first?
       placeholder: |
-        - Feature: #456 (Basic cluster setup)
-        - Task: #789 (Storage configuration)
-        - External: Docker registry access
+        - Feature: #456 (Database Infrastructure)
+        - Feature: #789 (Object Storage Setup)
+        - External: Container registry access
     validations:
       required: false
 
-  - type: dropdown
-    id: size_estimate
-    attributes:
-      label: Size Estimate
-      description: Rough development effort estimate
-      options:
-        - XS (< 1 day)
-        - S (1-3 days)
-        - M (3-5 days)
-        - L (1-2 weeks)
-        - XL (2+ weeks)
-    validations:
-      required: true
+
 
   - type: textarea
-    id: testing_approach
+    id: testing_strategy
     attributes:
-      label: Testing Approach
-      description: How will this feature be tested?
+      label: Testing Strategy
+      description: How will this feature be validated end-to-end?
       placeholder: |
-        - Unit tests for core logic
-        - Integration tests with [component]
-        - Manual testing scenarios
-        - Performance/load considerations
+        - Integration testing with dependent services
+        - End-to-end user workflow testing
+        - Performance and load considerations
+        - Security and access control validation
     validations:
       required: false
 
@@ -145,8 +85,10 @@ body:
     id: additional_context
     attributes:
       label: Additional Context
-      description: Screenshots, mockups, links, or other relevant information
+      description: Design docs, research, or reference materials
       placeholder: |
-        - Design mockups: [link]
+        - Architecture diagram: [link]
         - API documentation: [link]
         - Related research: [link]
+    validations:
+      required: false
