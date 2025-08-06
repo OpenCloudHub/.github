@@ -4,15 +4,6 @@ title: "[TASK] "
 labels: ["type:task"]
 type: "Task"
 body:
-  - type: input
-    id: task_title
-    attributes:
-      label: Task Title
-      description: Specific, actionable implementation task
-      placeholder: "e.g., Deploy MLflow server with PostgreSQL backend"
-    validations:
-      required: true
-
   - type: textarea
     id: implementation_description
     attributes:

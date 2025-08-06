@@ -4,15 +4,6 @@ title: "[EPIC] "
 labels: ["type:epic"]
 type: "Epic"
 body:
-  - type: input
-    id: epic_title
-    attributes:
-      label: Epic Title
-      description: Technical domain or major capability area
-      placeholder: "e.g., MLOps Training Platform, Security & Authentication"
-    validations:
-      required: true
-      
   - type: textarea
     id: description
     attributes:

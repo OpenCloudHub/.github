@@ -4,15 +4,6 @@ title: "[BUG] "
 labels: ["type:bug"]
 type: "Bug"
 body:
-  - type: input
-    id: bug_title
-    attributes:
-      label: Bug Title
-      description: Clear, descriptive title of the issue
-      placeholder: "e.g., ArgoCD sync fails with certificate error"
-    validations:
-      required: true
-
   - type: textarea
     id: description
     attributes:

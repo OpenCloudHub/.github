@@ -4,15 +4,6 @@ title: "[DOCS] "
 labels: ["type:documentation"]
 type: "Documentation"
 body:
-  - type: input
-    id: doc_title
-    attributes:
-      label: Documentation Title
-      description: Clear title for the documentation work
-      placeholder: "e.g., API Reference for MLflow Integration, Installation Guide"
-    validations:
-      required: true
-
   - type: textarea
     id: purpose
     attributes:
