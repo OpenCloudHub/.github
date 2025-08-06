@@ -1,107 +1,77 @@
 name: 📌 Task
-description: Specific implementation work or technical activities
+description: Specific implementation work with clear deliverables
 title: "[TASK] "
-labels: ["type: task"]
+labels: ["type:task"]
 body:
   - type: input
     id: task_title
     attributes:
       label: Task Title
-      description: Specific, actionable title for this task
-      placeholder: "e.g., Configure ArgoCD RBAC, Write Helm chart for MLflow"
+      description: Specific, actionable implementation task
+      placeholder: "e.g., Deploy MLflow server with PostgreSQL backend"
     validations:
       required: true
 
-  - type: dropdown
-    id: team
+  - type: textarea
+    id: implementation_description
     attributes:
-      label: Owning Team
-      description: Which team will complete this task?
-      options:
-        - platform
-        - ai
-        - app
-        - thesis
+      label: Implementation Description
+      description: What exactly needs to be built/configured/deployed?
+      placeholder: |
+        Create Helm values configuration for MLflow server deployment with:
+        - PostgreSQL backend connection
+        - MinIO artifact storage
+        - Istio sidecar injection
+        - RBAC service account
     validations:
       required: true
 
-  - type: dropdown
-    id: priority
+  - type: textarea
+    id: deliverables
     attributes:
-      label: Priority
-      description: How urgent is this task?
-      options:
-        - critical
-        - high
-        - medium
-        - low
+      label: Deliverables
+      description: Concrete outputs that define task completion
+      placeholder: |
+        - [ ] Helm values.yaml file created
+        - [ ] MLflow pod running in cluster
+        - [ ] Database connection verified
+        - [ ] Web UI accessible via ingress
+        - [ ] Basic smoke test passing
     validations:
       required: true
 
-  - type: dropdown
-    id: component
+  - type: textarea
+    id: implementation_details
     attributes:
-      label: Component
-      description: Which system component does this task affect?
-      options:
-        - infra
-        - gitops
-        - cicd
-        - ai-platform
-        - ai-models
-        - security
-        - observability
-        - storage
-        - demo-app
-    validations:
-      required: true
-
-  - type: input
-    id: parent_feature
-    attributes:
-      label: Parent Feature/Epic
-      description: Which feature or epic does this task belong to?
-      placeholder: "e.g., #123 (Feature: MLflow Deployment)"
+      label: Implementation Details
+      description: Specific files, commands, and configuration details
+      placeholder: |
+        Files to create/modify:
+        - charts/mlflow/values.yaml
+        - scripts/deploy-mlflow.sh
+        
+        Key configurations:
+        - Database URL: postgresql://...
+        - Storage backend: s3://minio-bucket
+        - Service port: 5000
+        
+        Commands:
+        - helm install mlflow ./charts/mlflow
+        - kubectl port-forward svc/mlflow 5000:5000
     validations:
       required: false
 
   - type: textarea
-    id: description
+    id: verification_checklist
     attributes:
-      label: Task Description
-      description: Clear description of what needs to be done
+      label: Verification Checklist
+      description: Step-by-step verification that the task works
       placeholder: |
-        Specific work to be completed...
-        
-        Context: Why this task is needed
-        Approach: How it should be implemented
-    validations:
-      required: true
-
-  - type: textarea
-    id: completion_criteria
-    attributes:
-      label: Completion Criteria
-      description: How will we know this task is done?
-      placeholder: |
-        - [ ] Configuration files created/updated
-        - [ ] Code changes implemented
-        - [ ] Tests passing
-        - [ ] Documentation updated
-        - [ ] Deployed and verified in cluster
-    validations:
-      required: true
-
-  - type: textarea
-    id: technical_details
-    attributes:
-      label: Technical Details
-      description: Specific technical requirements or implementation notes
-      placeholder: |
-        - File locations: [path/to/files]
-        - Configuration keys: [specific settings]
-        - Code changes needed: [brief description]
-        - Commands to run: [if applicable]
+        1. Check pod status: kubectl get pods -l app=mlflow
+        2. Verify logs: kubectl logs deployment/mlflow
+        3. Test web UI: curl http://mlflow.local/health
+        4. Test API: curl http://mlflow.local/api/2.0/experiments/list
+        5. Confirm database connection in UI
     validations:
       required: false
 
@@ -109,60 +79,28 @@ body:
     id: dependencies
     attributes:
       label: Dependencies
-      description: What must be completed before this task can start?
+      description: What must be completed before starting this task?
       placeholder: |
-        - Task: #456 (Install cert-manager)
-        - External: Access to container registry
-        - Knowledge: Understanding of Istio configuration
+        - Task: #789 (Deploy PostgreSQL cluster)
+        - Task: #790 (Configure MinIO bucket)
+        - Resource: Helm chart repository access
     validations:
       required: false
 
-  - type: dropdown
-    id: size_estimate
-    attributes:
-      label: Size Estimate
-      description: Expected time to complete this task
-      options:
-        - XS (< 2 hours)
-        - S (2-4 hours)
-        - M (4-8 hours)
-        - L (1-2 days)
-        - XL (2+ days)
-    validations:
-      required: true
 
-  - type: checkboxes
-    id: task_type
-    attributes:
-      label: Task Type
-      description: What kind of work is this?
-      options:
-        - label: Configuration/Setup
-        - label: Code Implementation
-        - label: Documentation
-        - label: Testing/Validation
-        - label: Deployment/Operations
-        - label: Research/Investigation
 
   - type: textarea
-    id: verification_steps
+    id: notes
     attributes:
-      label: Verification Steps
-      description: How to test/verify the task is working correctly
+      label: Implementation Notes
+      description: Technical gotchas, references, or special considerations
       placeholder: |
-        1. Run command: [specific command]
-        2. Check output: [expected result]
-        3. Verify in UI: [what to look for]
-        4. Test functionality: [specific test]
+        References:
+        - MLflow Helm chart: [link]
+        - Configuration docs: [link]
+        
+        Notes:
+        - Ensure persistent volume claims are created first
+        - May need to adjust resource limits for local cluster
     validations:
       required: false
-
-  - type: textarea
-    id: additional_context
-    attributes:
-      label: Additional Context
-      description: Links, references, or other relevant information
-      placeholder: |
-        - Documentation: [link]
-        - Related PRs: [link]
-        - Reference implementation: [link]
