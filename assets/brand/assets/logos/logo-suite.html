@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenCloudHub - Improved Logo Suite</title>
+    <style>
+        /* CSS Variables System - Based on your style guide */
+        :root {
+            /* Brand Colors */
+            --color-deep-slate: #34374c;
+            --color-charcoal: #1f212e;
+            --color-slate-blue: #494d6a;
+            --color-cloud-teal: #00d4aa;
+            --color-tech-blue: #0ea5e9;
+            --color-alert-orange: #f97316;
+            --color-error-red: #ef4444;
+            
+            /* Neutral Colors */
+            --color-pure-white: #ffffff;
+            --color-light-grey: #f6f6f6;
+            --color-medium-grey: #dcdcdc;
+            
+            /* Semantic Colors for UI */
+            --bg-primary: var(--color-pure-white);
+            --bg-secondary: var(--color-light-grey);
+            --text-primary: var(--color-charcoal);
+            --text-secondary: var(--color-slate-blue);
+            --border-color: var(--color-medium-grey);
+            
+            /* Logo Colors */
+            --logo-primary: var(--color-deep-slate);
+            --logo-accent: var(--color-cloud-teal);
+            --logo-text: var(--color-deep-slate);
+            --logo-bg: transparent;
+            
+            /* Spacing System */
+            --space-xs: 4px;
+            --space-sm: 8px;
+            --space-md: 16px;
+            --space-lg: 24px;
+            --space-xl: 32px;
+            --space-2xl: 48px;
+            --space-3xl: 64px;
+            
+            /* Typography */
+            --font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        /* Dark Mode */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-primary: var(--color-charcoal);
+                --bg-secondary: var(--color-deep-slate);
+                --text-primary: var(--color-pure-white);
+                --text-secondary: var(--color-light-grey);
+                --border-color: var(--color-slate-blue);
+                
+                --logo-primary: var(--color-pure-white);
+                --logo-text: var(--color-pure-white);
+            }
+        }
+
+        /* Manual Dark Mode Toggle */
+        [data-theme="dark"] {
+            --bg-primary: var(--color-charcoal);
+            --bg-secondary: var(--color-deep-slate);
+            --text-primary: var(--color-pure-white);
+            --text-secondary: var(--color-light-grey);
+            --border-color: var(--color-slate-blue);
+            
+            --logo-primary: var(--color-pure-white);
+            --logo-text: var(--color-pure-white);
+        }
+
+        [data-theme="light"] {
+            --bg-primary: var(--color-pure-white);
+            --bg-secondary: var(--color-light-grey);
+            --text-primary: var(--color-charcoal);
+            --text-secondary: var(--color-slate-blue);
+            --border-color: var(--color-medium-grey);
+            
+            --logo-primary: var(--color-deep-slate);
+            --logo-text: var(--color-deep-slate);
+        }
+
+        /* Base Styles */
+        body {
+            font-family: var(--font-family);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            margin: 0;
+            padding: var(--space-lg);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: var(--space-2xl);
+        }
+        
+        .theme-toggle {
+            position: fixed;
+            top: var(--space-lg);
+            right: var(--space-lg);
+            background: var(--color-cloud-teal);
+            color: white;
+            border: none;
+            padding: var(--space-sm) var(--space-md);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            z-index: 1000;
+        }
+        
+        .theme-toggle:hover {
+            opacity: 0.9;
+        }
+        
+        .logo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: var(--space-lg);
+            margin: var(--space-xl) 0;
+        }
+        
+        .logo-card {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: var(--space-xl);
+            border: 1px solid var(--border-color);
+            text-align: center;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+        
+        .logo-preview {
+            margin: var(--space-lg) 0;
+            padding: var(--space-2xl);
+            border-radius: 8px;
+            min-height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+        }
+        
+        .logo-svg {
+            max-width: 100%;
+            height: auto;
+        }
+        
+        /* Improved SVG styling with CSS variables */
+        .logo-svg .logo-primary { fill: var(--logo-primary); }
+        .logo-svg .logo-accent { fill: var(--logo-accent); }
+        .logo-svg .logo-text { fill: var(--logo-text); }
+        
+        h1 { 
+            color: var(--text-primary); 
+            text-align: center; 
+            margin-bottom: var(--space-md); 
+            font-size: 36px;
+            font-weight: 600;
+        }
+        
+        .subtitle { 
+            color: var(--text-secondary); 
+            text-align: center; 
+            margin-bottom: var(--space-2xl); 
+        }
+        
+        h2 { 
+            color: var(--text-primary); 
+            margin-bottom: var(--space-md); 
+            font-size: 24px;
+            font-weight: 500;
+        }
+        
+        .description { 
+            color: var(--text-secondary); 
+            font-size: 14px; 
+            margin-bottom: var(--space-lg); 
+        }
+        
+        button {
+            background: var(--color-cloud-teal);
+            color: white;
+            border: none;
+            padding: var(--space-sm) var(--space-lg);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: var(--space-xs);
+            font-weight: 500;
+            transition: background-color 0.2s ease;
+        }
+        
+        button:hover {
+            background: #00c199;
+        }
+        
+        .download-section {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: var(--space-lg);
+            margin: var(--space-xl) 0;
+            border: 1px solid var(--border-color);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+        
+        .usage-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--space-lg);
+            margin: var(--space-lg) 0;
+        }
+        
+        .usage-example {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: var(--space-lg);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+        
+        .usage-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-top: var(--space-sm);
+        }
+        
+        .css-output {
+            background: var(--color-charcoal);
+            color: var(--color-light-grey);
+            padding: var(--space-lg);
+            border-radius: 8px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 13px;
+            margin: var(--space-lg) 0;
+            overflow-x: auto;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+        
+        .network-animation {
+            animation: pulse 2s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body data-theme="light">
+    <button class="theme-toggle" onclick="toggleTheme()">🌙 Dark Mode</button>
+    
+    <div class="container">
+        <div class="header">
+            <h1>OpenCloudHub Logo Suite</h1>
+            <p class="subtitle">Properly centered, consistently spaced logos with CSS variables system</p>
+        </div>
+
+        <div class="logo-grid">
+            <!-- Primary Horizontal Logo -->
+            <div class="logo-card">
+                <h2>Primary Logo</h2>
+                <p class="description">For headers, navigation, business cards<br>Minimum size: 120px width</p>
+                
+                <div class="logo-preview">
+                    <svg class="logo-svg" width="240" height="64" viewBox="0 0 240 64" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Proper spacing: 16px margin on all sides, logo height = 32px -->
+                        <g transform="translate(16, 16)">
+                            <!-- Icon with proper proportions -->
+                            <circle cx="16" cy="16" r="12" class="logo-primary" />
+                            <circle cx="16" cy="16" r="6" class="logo-accent" />
+                            
+                            <!-- Text with proper spacing -->
+                            <text x="44" y="22" font-family="system-ui, sans-serif" font-size="18" font-weight="600" class="logo-text">OpenCloudHub</text>
+                        </g>
+                    </svg>
+                </div>
+                
+                <button onclick="downloadOptimizedSVG('primary-logo')">Download SVG</button>
+                <button onclick="downloadCSS()">Download CSS Variables</button>
+            </div>
+
+            <!-- Stacked Logo - FIXED -->
+            <div class="logo-card">
+                <h2>Stacked Logo</h2>
+                <p class="description">For square spaces, mobile apps<br>Minimum size: 80px width</p>
+                
+                <div class="logo-preview">
+                    <svg class="logo-svg" width="160" height="120" viewBox="0 0 160 120" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Proper spacing: 16px margin on all sides, total content height = 88px -->
+                        <g transform="translate(16, 16)">
+                            <!-- Icon centered horizontally -->
+                            <circle cx="64" cy="16" r="12" class="logo-primary" />
+                            <circle cx="64" cy="16" r="6" class="logo-accent" />
+                            
+                            <!-- Text properly centered and spaced -->
+                            <text x="64" y="52" font-family="system-ui, sans-serif" font-size="16" font-weight="600" class="logo-text" text-anchor="middle">OpenCloudHub</text>
+                            <text x="64" y="72" font-family="system-ui, sans-serif" font-size="12" class="logo-text" text-anchor="middle" opacity="0.7">Cloud-Native MLOps</text>
+                        </g>
+                    </svg>
+                </div>
+                
+                <button onclick="downloadOptimizedSVG('stacked-logo')">Download SVG</button>
+            </div>
+
+            <!-- Monogram - IMPROVED -->
+            <div class="logo-card">
+                <h2>Monogram</h2>
+                <p class="description">For favicons, social media avatars<br>Minimum size: 32px</p>
+                
+                <div class="logo-preview">
+                    <svg class="logo-svg" width="80" height="80" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Proper spacing: 8px margin on all sides, circle diameter = 64px -->
+                        <g transform="translate(8, 8)">
+                            <circle cx="32" cy="32" r="32" class="logo-primary" />
+                            <text x="32" y="40" font-family="system-ui, sans-serif" font-size="20" font-weight="700" fill="white" text-anchor="middle">OCH</text>
+                        </g>
+                    </svg>
+                </div>
+                
+                <button onclick="downloadOptimizedSVG('monogram')">Download SVG</button>
+            </div>
+
+            <!-- Icon Mark - IMPROVED -->
+            <div class="logo-card">
+                <h2>Icon Mark</h2>
+                <p class="description">Simple circle for apps, loading states<br>Minimum size: 24px</p>
+                
+                <div class="logo-preview">
+                    <svg class="logo-svg" width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Proper spacing: 8px margin on all sides, circle diameter = 48px -->
+                        <g transform="translate(8, 8)">
+                            <circle cx="24" cy="24" r="24" class="logo-primary" />
+                            <circle cx="24" cy="24" r="14" class="logo-accent" />
+                        </g>
+                    </svg>
+                </div>
+                
+                <button onclick="downloadOptimizedSVG('icon-mark')">Download SVG</button>
+            </div>
+        </div>
+
+        <!-- Usage Examples -->
+        <div class="download-section">
+            <h2>Live Usage Examples</h2>
+            <div class="usage-grid">
+                
+                <!-- Website Header -->
+                <div class="usage-example">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+                        <svg width="180" height="32" viewBox="0 0 240 64" xmlns="http://www.w3.org/2000/svg">
+                            <g transform="translate(16, 16)">
+                                <circle cx="16" cy="16" r="12" class="logo-primary" />
+                                <circle cx="16" cy="16" r="6" class="logo-accent" />
+                                <text x="44" y="22" font-family="system-ui, sans-serif" font-size="18" font-weight="600" class="logo-text">OpenCloudHub</text>
+                            </g>
+                        </svg>
+                        <div style="display: flex; gap: 16px; font-size: 14px; color: var(--text-secondary);">
+                            <span>Docs</span>
+                            <span>Platform</span>
+                            <span>About</span>
+                        </div>
+                    </div>
+                    <div class="usage-label">Website Header Example</div>
+                </div>
+
+                <!-- Mobile App -->
+                <div class="usage-example">
+                    <div style="text-align: center;">
+                        <svg width="80" height="60" viewBox="0 0 160 120" xmlns="http://www.w3.org/2000/svg">
+                            <g transform="translate(16, 16)">
+                                <circle cx="64" cy="16" r="12" class="logo-primary" />
+                                <circle cx="64" cy="16" r="6" class="logo-accent" />
+                                <text x="64" y="52" font-family="system-ui, sans-serif" font-size="16" font-weight="600" class="logo-text" text-anchor="middle">OpenCloudHub</text>
+                                <text x="64" y="72" font-family="system-ui, sans-serif" font-size="12" class="logo-text" text-anchor="middle" opacity="0.7">Cloud-Native MLOps</text>
+                            </g>
+                        </svg>
+                    </div>
+                    <div class="usage-label">Mobile App Splash Screen</div>
+                </div>
+
+                <!-- Favicon -->
+                <div class="usage-example">
+                    <div style="text-align: center;">
+                        <div style="display: inline-block; padding: 8px; background: var(--bg-secondary); border-radius: 4px; margin-bottom: 12px;">
+                            <svg width="32" height="32" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+                                <g transform="translate(8, 8)">
+                                    <circle cx="32" cy="32" r="32" class="logo-primary" />
+                                    <text x="32" y="40" font-family="system-ui, sans-serif" font-size="20" font-weight="700" fill="white" text-anchor="middle">OCH</text>
+                                </g>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="usage-label">Browser Tab Favicon</div>
+                </div>
+
+                <!-- Icon Only -->
+                <div class="usage-example">
+                    <div style="text-align: center;">
+                        <svg width="48" height="48" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                            <g transform="translate(8, 8)">
+                                <circle cx="24" cy="24" r="24" class="logo-primary" />
+                                <circle cx="24" cy="24" r="14" class="logo-accent" />
+                            </g>
+                        </svg>
+                    </div>
+                    <div class="usage-label">Loading Spinner Base</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CSS Variables Output -->
+        <div class="download-section">
+            <h2>CSS Variables System</h2>
+            <p class="description">Copy this CSS to use the OpenCloudHub design system with automatic dark mode support</p>
+            
+            <div class="css-output" id="css-output">
+/* OpenCloudHub Design System - CSS Variables */
+:root {
+  /* Brand Colors */
+  --color-deep-slate: #34374c;
+  --color-charcoal: #1f212e;
+  --color-slate-blue: #494d6a;
+  --color-cloud-teal: #00d4aa;
+  --color-tech-blue: #0ea5e9;
+  --color-alert-orange: #f97316;
+  --color-error-red: #ef4444;
+  
+  /* Neutral Colors */
+  --color-pure-white: #ffffff;
+  --color-light-grey: #f6f6f6;
+  --color-medium-grey: #dcdcdc;
+  
+  /* Semantic Colors */
+  --bg-primary: var(--color-pure-white);
+  --bg-secondary: var(--color-light-grey);
+  --text-primary: var(--color-charcoal);
+  --text-secondary: var(--color-slate-blue);
+  --border-color: var(--color-medium-grey);
+  
+  /* Logo Colors */
+  --logo-primary: var(--color-deep-slate);
+  --logo-accent: var(--color-cloud-teal);
+  --logo-text: var(--color-deep-slate);
+  
+  /* Spacing System (8px grid) */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+  --space-3xl: 64px;
+}
+
+/* Dark Mode */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-primary: var(--color-charcoal);
+    --bg-secondary: var(--color-deep-slate);
+    --text-primary: var(--color-pure-white);
+    --text-secondary: var(--color-light-grey);
+    --border-color: var(--color-slate-blue);
+    --logo-primary: var(--color-pure-white);
+    --logo-text: var(--color-pure-white);
+  }
+}
+
+/* Manual Dark Mode Toggle */
+[data-theme="dark"] {
+  --bg-primary: var(--color-charcoal);
+  --bg-secondary: var(--color-deep-slate);
+  --text-primary: var(--color-pure-white);
+  --text-secondary: var(--color-light-grey);
+  --border-color: var(--color-slate-blue);
+  --logo-primary: var(--color-pure-white);
+  --logo-text: var(--color-pure-white);
+}
+
+/* Logo SVG Classes */
+.logo-svg .logo-primary { fill: var(--logo-primary); }
+.logo-svg .logo-accent { fill: var(--logo-accent); }
+.logo-svg .logo-text { fill: var(--logo-text); }
+            </div>
+            
+            <button onclick="copyCSS()">Copy CSS Variables</button>
+            <button onclick="downloadCSSFile()">Download CSS File</button>
+        </div>
+
+        <!-- Download All -->
+        <div class="download-section" style="text-align: center;">
+            <h2>Complete Package</h2>
+            <p style="color: var(--text-secondary); margin: 16px 0;">Get all optimized SVG logos + CSS variables system</p>
+            <button onclick="downloadCompletePackage()" style="font-size: 16px; padding: 12px 24px;">Download Everything</button>
+        </div>
+    </div>
+
+    <script>
+        let currentTheme = 'light';
+        
+        function toggleTheme() {
+            currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+            document.body.setAttribute('data-theme', currentTheme);
+            
+            const button = document.querySelector('.theme-toggle');
+            button.textContent = currentTheme === 'light' ? '🌙 Dark Mode' : '☀️ Light Mode';
+        }
+        
+        // Optimized SVG templates with proper spacing
+        const optimizedLogos = {
+            'primary-logo': `<svg width="240" height="64" viewBox="0 0 240 64" xmlns="http://www.w3.org/2000/svg">
+                <g transform="translate(16, 16)">
+                    <circle cx="16" cy="16" r="12" class="logo-primary" />
+                    <circle cx="16" cy="16" r="6" class="logo-accent" />
+                    <text x="44" y="22" font-family="system-ui, sans-serif" font-size="18" font-weight="600" class="logo-text">OpenCloudHub</text>
+                </g>
+            </svg>`,
+            
+            'stacked-logo': `<svg width="160" height="120" viewBox="0 0 160 120" xmlns="http://www.w3.org/2000/svg">
+                <g transform="translate(16, 16)">
+                    <circle cx="64" cy="16" r="12" class="logo-primary" />
+                    <circle cx="64" cy="16" r="6" class="logo-accent" />
+                    <text x="64" y="52" font-family="system-ui, sans-serif" font-size="16" font-weight="600" class="logo-text" text-anchor="middle">OpenCloudHub</text>
+                    <text x="64" y="72" font-family="system-ui, sans-serif" font-size="12" class="logo-text" text-anchor="middle" opacity="0.7">Cloud-Native MLOps</text>
+                </g>
+            </svg>`,
+            
+            'monogram': `<svg width="80" height="80" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+                <g transform="translate(8, 8)">
+                    <circle cx="32" cy="32" r="32" class="logo-primary" />
+                    <text x="32" y="40" font-family="system-ui, sans-serif" font-size="20" font-weight="700" fill="white" text-anchor="middle">OCH</text>
+                </g>
+            </svg>`,
+            
+            'icon-mark': `<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                <g transform="translate(8, 8)">
+                    <circle cx="24" cy="24" r="24" class="logo-primary" />
+                    <circle cx="24" cy="24" r="14" class="logo-accent" />
+                </g>
+            </svg>`
+        };
+
+        function downloadOptimizedSVG(logoName) {
+            const svgContent = optimizedLogos[logoName];
+            const blob = new Blob([svgContent], { type: 'image/svg+xml' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `opencloudhub-${logoName}.svg`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function copyCSS() {
+            const cssContent = document.getElementById('css-output').textContent;
+            navigator.clipboard.writeText(cssContent).then(() => {
+                const originalText = event.target.textContent;
+                event.target.textContent = 'Copied!';
+                setTimeout(() => {
+                    event.target.textContent = originalText;
+                }, 2000);
+            });
+        }
+
+        function downloadCSSFile() {
+            const cssContent = document.getElementById('css-output').textContent;
+            const blob = new Blob([cssContent], { type: 'text/css' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'opencloudhub-design-system.css';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function downloadCompletePackage() {
+            // Download all SVGs
+            Object.keys(optimizedLogos).forEach((logoName, index) => {
+                setTimeout(() => {
+                    downloadOptimizedSVG(logoName);
+                }, index * 200);
+            });
+            
+            // Download CSS file
+            setTimeout(() => {
+                downloadCSSFile();
+            }, Object.keys(optimizedLogos).length * 200 + 200);
+        }
+    </script>
+</body>
+</html>
