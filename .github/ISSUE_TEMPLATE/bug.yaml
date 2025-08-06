@@ -1,7 +1,8 @@
 name: 🐞 Bug
 description: Something is broken or not working as expected
 title: "[BUG] "
-labels: ["type: bug"]
+labels: ["type:bug"]
+type: "Bug"
 body:
   - type: input
     id: bug_title
@@ -9,50 +10,6 @@ body:
       label: Bug Title
       description: Clear, descriptive title of the issue
       placeholder: "e.g., ArgoCD sync fails with certificate error"
-    validations:
-      required: true
-
-  - type: dropdown
-    id: team
-    attributes:
-      label: Affected Team
-      description: Which team's area is affected by this bug?
-      options:
-        - platform
-        - ai
-        - app
-        - thesis
-    validations:
-      required: true
-
-  - type: dropdown
-    id: severity
-    attributes:
-      label: Severity
-      description: How severe is this bug?
-      options:
-        - critical (System down, blocking progress)
-        - high (Major functionality broken)
-        - medium (Functionality impaired)
-        - low (Minor issue, workaround available)
-    validations:
-      required: true
-
-  - type: dropdown
-    id: component
-    attributes:
-      label: Affected Component
-      description: Which system component has the bug?
-      options:
-        - infra
-        - gitops
-        - cicd
-        - ai-platform
-        - ai-models
-        - security
-        - observability
-        - storage
-        - demo-app
     validations:
       required: true
 
