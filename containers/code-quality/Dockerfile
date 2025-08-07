@@ -7,29 +7,29 @@ ARG GIT_USER_NAME="CI Bot"
 
 # Install system dependencies, hadolint, Python tools, and JS tools in fewer layers
 RUN apk add --no-cache --upgrade \
-  git=~2.45 \
-  curl=~8.9 \
-  shellcheck=~0.10 \
-  nodejs=~20.15 \
-  npm=~10.8 \
-  wget=~1.24 \
-  bash=~5.2 \
-  sqlite=~3.49 && \
+  git \
+  curl \
+  shellcheck \
+  nodejs \
+  npm \
+  wget \
+  bash \
+  sqlite && \
   # Install hadolint
   wget --progress=dot:giga -O /usr/local/bin/hadolint \
   https://github.com/hadolint/hadolint/releases/download/v2.12.0/hadolint-Linux-x86_64 && \
   chmod +x /usr/local/bin/hadolint && \
   # Install Python tools
-  pip install --no-cache-dir --upgrade pip==25.2 setuptools==75.8.0 && \
+  pip install --no-cache-dir --upgrade pip setuptools && \
   pip install --no-cache-dir \
-  pre-commit==4.0.1 \
-  ruff==0.8.2 \
-  black==24.10.0 \
-  bandit==1.7.10 && \
+  pre-commit \
+  ruff \
+  black \
+  bandit && \
   # Install JavaScript tools
   npm install -g \
-  prettier@3.3.3 \
-  @biomejs/biome@1.9.4
+  prettier \
+  @biomejs/biome
 
 # Set working directory
 WORKDIR /workspace
