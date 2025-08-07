@@ -14,7 +14,4 @@ jobs:
         uses: actions/checkout@v4
 
       - name: 🧪 Run pre-commit
-        run: |
-          git config --global --add safe.directory $PWD
-          cp /app/.pre-commit-config.yaml .
-          pre-commit run --all-files
+        run: pre-commit run --all-files
