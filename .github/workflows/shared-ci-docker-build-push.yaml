@@ -55,11 +55,11 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: ${{ inputs.context }}
+          file: ${{ inputs.context }}/${{ inputs.dockerfile }}
           build-args: ${{ inputs.build-args }}
           load: true # Load into local Docker daemon
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          file: ${{ inputs.context }}/${{ inputs.dockerfile }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -84,6 +84,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: ${{ inputs.context }}
+          file: ${{ inputs.context }}/${{ inputs.dockerfile }}
           build-args: ${{ inputs.build-args }}
           push: true
           tags: ${{ steps.meta.outputs.tags }}
