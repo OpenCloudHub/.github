@@ -1,7 +1,7 @@
 FROM python:3.12-alpine
 
 # Build args
-ARG PRECOMMIT_CONFIG_PATH="../../.pre-commit-config.yaml"
+ARG PRECOMMIT_CONFIG_PATH="../../pre-commit-config.yaml"
 ARG GIT_USER_EMAIL="ci@localhost"
 ARG GIT_USER_NAME="CI Bot"
 
@@ -35,9 +35,9 @@ RUN apk add --no-cache --upgrade \
 WORKDIR /workspace
 
 # Set git config
-RUN git config --global --add safe.directory '*' \
-  && git config --global user.email "${GIT_USER_EMAIL}" \
-  && git config --global user.name "${GIT_USER_NAME}"
+RUN git config --global --add safe.directory '*' && \
+  git config --global user.email "${GIT_USER_EMAIL}" && \
+  git config --global user.name "${GIT_USER_NAME}"
 
 # Copy pre-commit config
 COPY ${PRECOMMIT_CONFIG_PATH} /app/.pre-commit-config.yaml
