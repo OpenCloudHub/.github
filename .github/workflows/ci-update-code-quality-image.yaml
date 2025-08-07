@@ -10,7 +10,7 @@ jobs:
     uses: exploring-gh-organizations/called/.github/workflows/docker.yaml@main
     with:
       repo-name: "code-quality"
-      context: "."
+      context: "containers/code-quality"
     secrets:
       DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
