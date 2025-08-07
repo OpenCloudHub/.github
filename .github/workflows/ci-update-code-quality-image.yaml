@@ -14,7 +14,6 @@ jobs:
       context: "."
       dockerfile: "containers/code-quality/Dockerfile"
       build-args: |
-        DOCKERFILE_PATH=containers/code-quality/Dockerfile
         PRECOMMIT_CONFIG_PATH=.pre-commit-config.yaml
     secrets:
       DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
