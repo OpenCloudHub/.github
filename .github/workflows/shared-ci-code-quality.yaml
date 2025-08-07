@@ -7,7 +7,7 @@ jobs:
     name: Code Quality Checks
     runs-on: ubuntu-latest
     container:
-      image: reinhuddev1/code-quality:latest
+      image: opencloudhub/code-quality:latest
 
     steps:
       - name: 📦 Checkout
