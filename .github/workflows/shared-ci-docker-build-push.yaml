@@ -10,6 +10,10 @@ on:
         description: "Build context directory"
         type: string
         default: "."
+      dockerfile:
+        description: "Path to Dockerfile relative to context"
+        type: string
+        default: "Dockerfile"
       build-args:
         description: "Build arguments (key=value, one per line)"
         type: string
@@ -55,6 +59,7 @@ jobs:
           load: true # Load into local Docker daemon
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          file: ${{ inputs.context }}/${{ inputs.dockerfile }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
