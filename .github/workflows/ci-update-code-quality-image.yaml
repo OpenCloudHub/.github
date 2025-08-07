@@ -12,6 +12,9 @@ on:
       - ".github/workflows/ci-update-code-quality-image.yaml"
       - ".pre-commit-config.yaml"
 
+permissions:
+  contents: read
+
 jobs:
   build:
     uses: opencloudhub/.github/.github/workflows/shared-ci-docker-build-push.yaml@main

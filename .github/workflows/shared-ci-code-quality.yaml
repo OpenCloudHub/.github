@@ -1,4 +1,4 @@
-name: Code Quality
+name: Shared Code Quality
 on:
   workflow_call:
 

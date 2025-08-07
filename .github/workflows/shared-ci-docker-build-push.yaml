@@ -1,4 +1,4 @@
-name: Docker Build & Secure & Push
+name: Shared Docker Build & Secure & Push
 on:
   workflow_call:
     inputs:
