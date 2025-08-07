@@ -4,11 +4,10 @@
 
 We take the security of our project seriously. If you believe you've found a security vulnerability, we appreciate your efforts to responsibly disclose your findings, and will make every effort to acknowledge your contributions.
 
-
 ### 📧 How to Report
 
 1. **DO NOT** disclose the vulnerability publicly
-2. To report a security issue, please use the GitHub Security Advisory feature:  
+1. To report a security issue, please use the GitHub Security Advisory feature:\
    👉 [Report a Vulnerability](../../security/advisories/new)
 
 ### ⏱️ What to Expect
@@ -16,9 +15,9 @@ We take the security of our project seriously. If you believe you've found a sec
 After you submit a vulnerability report:
 
 1. You'll receive an acknowledgment
-2. We'll investigate and provide a timeline for a fix
-3. We'll keep you updated as we work on a solution
-4. When the vulnerability is fixed, we'll publicly acknowledge your responsible disclosure (unless you prefer to remain anonymous)
+1. We'll investigate and provide a timeline for a fix
+1. We'll keep you updated as we work on a solution
+1. When the vulnerability is fixed, we'll publicly acknowledge your responsible disclosure (unless you prefer to remain anonymous)
 
 ## 🛠️ Security Best Practices
 

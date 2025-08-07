@@ -41,12 +41,12 @@ body:
         Files to create/modify:
         - charts/mlflow/values.yaml
         - scripts/deploy-mlflow.sh
-        
+
         Key configurations:
         - Database URL: postgresql://...
         - Storage backend: s3://minio-bucket
         - Service port: 5000
-        
+
         Commands:
         - helm install mlflow ./charts/mlflow
         - kubectl port-forward svc/mlflow 5000:5000
@@ -79,8 +79,6 @@ body:
     validations:
       required: false
 
-
-
   - type: textarea
     id: notes
     attributes:
@@ -90,7 +88,7 @@ body:
         References:
         - MLflow Helm chart: [link]
         - Configuration docs: [link]
-        
+
         Notes:
         - Ensure persistent volume claims are created first
         - May need to adjust resource limits for local cluster

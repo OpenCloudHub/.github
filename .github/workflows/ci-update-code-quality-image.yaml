@@ -1,0 +1,16 @@
+name: Update Code Quality Image
+on:
+  push:
+    paths:
+      - "containers/code-quality/Dockerfile"
+      - ".github/workflows/ci-update-code-quality-image.yaml"
+
+jobs:
+  build:
+    uses: exploring-gh-organizations/called/.github/workflows/docker.yaml@main
+    with:
+      repo-name: "code-quality"
+      context: "."
+    secrets:
+      DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}

@@ -12,14 +12,14 @@
   </picture>
   </a>
 
-  <h1 align="center">GitHub Standards & Templates</h1>
+<h1 align="center">GitHub Standards & Templates</h1>
 
-  <p align="center">
+<p align="center">
     Central repository for managing OpenCloudHub's GitHub metadata, workflows, contribution standards, branding, and reusable templates.<br />
     <a href="https://github.com/opencloudhub"><strong>Explore the organization »</strong></a>
   </p>
 
-  <p align="center">
+<p align="center">
     <a href="https://github.com/opencloudhub/.github/graphs/contributors">
       <img src="https://img.shields.io/github/contributors/opencloudhub/.github.svg?style=for-the-badge" alt="Contributors">
     </a>
@@ -38,7 +38,7 @@
   </p>
 </div>
 
----
+______________________________________________________________________
 
 <details>
   <summary>📑 Table of Contents</summary>
@@ -49,14 +49,14 @@
     <li><a href="#ared-configurations">Shared Configurations</a></li>
     <li><a href="#rkflows--automation">Workflows & Automation</a></li>
     <li><a href="#getting-started">Getting Started</a></li>
-    <li><a href="#oject-structure">Project Structure</a></li>
+    <li><a href="#object-structure">Project Structure</a></li>
     <li><a href="#ontributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
     <li><a href="#contact">Contact</a></li>
   </ol>
 </details>
 
----
+______________________________________________________________________
 
 <h2 id="features">✨ Features</h2>
 
@@ -71,7 +71,7 @@ This repository serves as the centralized location for **organization-level GitH
 
 All other repositories within the organization can reference or copy these resources to ensure **standardization and compliance**.
 
----
+______________________________________________________________________
 
 <h2 id="branding">🎨 Branding</h2>
 
@@ -85,8 +85,7 @@ Use the **light-background** logo variants for public documentation to ensure ma
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
----
-
+______________________________________________________________________
 
 <h2 id="templates">🧰 Templates</h2>
 
@@ -101,7 +100,7 @@ These templates enable fast, standardized setup for any new repository under the
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
----
+______________________________________________________________________
 
 <h2 id="shared-configurations">⚙️ Shared Configurations</h2>
 
@@ -115,7 +114,7 @@ Pre-commit config can be symlinked or copied into individual repos. The code qua
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
----
+______________________________________________________________________
 
 <h2 id="workflows-automation">🤖 Workflows & Automation</h2>
 
@@ -131,16 +130,16 @@ These workflows can be imported into any repository in the organization for cons
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
----
+______________________________________________________________________
 
 <h2 id="getting-started">🚀 Getting Started</h2>
 
 To make use of this repository’s content in your own repo:
 
 1. Reference templates manually or via automation
-2. Use `uses: opencloudhub/.github/.github/workflows/<workflow>.yaml@main` in your Actions
-3. Copy branding assets or style guide as needed
-4. Clone or curl raw pre-commit config:
+1. Use `uses: opencloudhub/.github/.github/workflows/<workflow>.yaml@main` in your Actions
+1. Copy branding assets or style guide as needed
+1. Clone or curl raw pre-commit config:
    ```sh
    curl -O https://raw.githubusercontent.com/opencloudhub/.github/main/config/pre-commit-config.yaml
    ```
@@ -175,7 +174,6 @@ To make use of this repository’s content in your own repo:
 └── README.md                   # This file
 ```
 
-
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- CONTRIBUTING -->
@@ -207,21 +205,10 @@ Organization Link: [https://github.com/OpenCloudHub](https://github.com/OpenClou
 <!-- ACKNOWLEDGEMENTS -->
 
 <h2 id="acknowledgements">🙏 Acknowledgements</h2>
-Share links or refrences to useful resources:
+Share links or references to useful resources:
 
 - [Best-README-Template](https://github.com/othneildrew/Best-README-Template) - The foundation for this README design
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- MARKDOWN LINKS & IMAGES -->
-
-[contributors-shield]: https://img.shields.io/github/contributors/opencloudhub/.github.svg?style=for-the-badge
-[contributors-url]: https://github.com/opencloudhub/.github/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/opencloudhub/.github.svg?style=for-the-badge
-[forks-url]: https://github.com/opencloudhub/.github/network/members
-[issues-shield]: https://img.shields.io/github/issues/opencloudhub/.github.svg?style=for-the-badge
-[issues-url]: https://github.com/opencloudhub/.github/issues
-[license-shield]: https://img.shields.io/github/license/opencloudhub/.github.svg?style=for-the-badge
-[license-url]: https://github.com/opencloudhub/.github/blob/master/LICENSE
-[stars-shield]: https://img.shields.io/github/stars/opencloudhub/.github.svg?style=for-the-badge
-[stars-url]: https://github.com/opencloudhub/.github/stargazers

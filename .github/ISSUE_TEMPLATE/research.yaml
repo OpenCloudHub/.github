@@ -25,7 +25,7 @@ body:
         Scope:
         - [what to investigate]
         - [what tools/technologies to evaluate]
-        
+
         Approach:
         - [methodology - literature review, testing, comparison]
         - [resources needed - tools, access, experts]
@@ -42,7 +42,7 @@ body:
         - [ ] Research question answered with confidence
         - [ ] Recommendations documented with rationale
         - [ ] Proof-of-concept implemented (if applicable)
-        
+
         Deliverables:
         - Research report with findings
         - Decision framework or comparison

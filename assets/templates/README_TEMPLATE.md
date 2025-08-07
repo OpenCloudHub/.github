@@ -12,17 +12,18 @@
   </picture>
   </a>
 
-  <h1 align="center">Organisation README Template</h1>
+<h1 align="center">Organisation README Template</h1>
 
-  <!-- SORT DESCRIPTION -->
-  <p align="center">
+<!-- SORT DESCRIPTION -->
+
+<p align="center">
     A comprehensive template for creating well-structured repository README's.<br />
     <a href="https://github.com/opencloudhub/.github"><strong>Explore the organization »</strong></a>
   </p>
 
-  <!-- BADGES -->
+<!-- BADGES -->
 
-  <p align="center">
+<p align="center">
     <a href="https://github.com/opencloudhub/.github/graphs/contributors">
       <img src="https://img.shields.io/github/contributors/opencloudhub/.github.svg?style=for-the-badge" alt="Contributors">
     </a>
@@ -56,7 +57,6 @@
   </ol>
 </details>
 
-
 <!-- FEATURES -->
 
 <h2 id="features">✨ Features</h2>
@@ -79,8 +79,8 @@
 ### Usage
 
 1. Describe how this repository is intended to be used
-2. Do it steo by step
-3. Provide usefull code snippets:
+1. Do it steo by step
+1. Provide useful code snippets:
    ```nash
    echo "Useful stuff here"
    ```
@@ -109,11 +109,9 @@
 └── README.md                   # This file
 ```
 
-
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- CONTRIBUTING -->
-
 
 <h2 id="contributing">👥 Contributing</h2>
 
@@ -143,19 +141,19 @@ Organization Link: [https://github.com/OpenCloudHub](https://github.com/OpenClou
 
 <h2 id="acknowledgements">🙏 Acknowledgements</h2>
 
-Share links or refrences to useful resources:
+Share links or references to useful resources:
 
 - [Best-README-Template](https://github.com/othneildrew/Best-README-Template) - The foundation for this README design
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
----
+______________________________________________________________________
 
 <div align="center">
   <h3>🌟 Follow the Journey</h3>
   <p><em>Building in public • Learning together • Sharing knowledge</em></p>
-  
-  <div>
+
+<div>
     <a href="https://opencloudhub.github.io/docs">
       <img src="https://img.shields.io/badge/Read%20the%20Docs-2596BE?style=for-the-badge&logo=read-the-docs&logoColor=white" alt="Documentation">
     </a>
@@ -169,14 +167,3 @@ Share links or refrences to useful resources:
 </div>
 
 <!-- MARKDOWN LINKS & IMAGES -->
-
-[contributors-shield]: https://img.shields.io/github/contributors/opencloudhub/.github.svg?style=for-the-badge
-[contributors-url]: https://github.com/opencloudhub/.github/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/opencloudhub/.github.svg?style=for-the-badge
-[forks-url]: https://github.com/opencloudhub/.github/network/members
-[issues-shield]: https://img.shields.io/github/issues/opencloudhub/.github.svg?style=for-the-badge
-[issues-url]: https://github.com/opencloudhub/.github/issues
-[license-shield]: https://img.shields.io/github/license/opencloudhub/.github.svg?style=for-the-badge
-[license-url]: https://github.com/opencloudhub/.github/blob/master/LICENSE
-[stars-shield]: https://img.shields.io/github/stars/opencloudhub/.github.svg?style=for-the-badge
-[stars-url]: https://github.com/opencloudhub/.github/stargazers
