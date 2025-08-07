@@ -5,6 +5,7 @@ on:
       - "containers/code-quality/Dockerfile"
       - ".github/workflows/ci-update-code-quality-image.yaml"
       - ".pre-commit-config.yaml"
+      - ".pre-commit-config.yaml"
 
 jobs:
   build:
