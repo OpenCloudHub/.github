@@ -14,14 +14,13 @@
 		"ghcr.io/itsmechlark/features/trivy:1": {},
 		"ghcr.io/devcontainers-extra/features/pre-commit:2": {},
 		"ghcr.io/devcontainers-extra/features/act:1": {},
-		"ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}
+		"ghcr.io/devcontainers/features/docker-outside-of-docker:1": {},
+		"ghcr.io/dhoeric/features/hadolint:1": {}
 	},
 	"mounts": [
 		"source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
 	],
-	"runArgs": [
-		"--network=host"
-	],
+	"runArgs": ["--network=host"],
 	"postCreateCommand": "sudo usermod -aG docker vscode && pre-commit install && pre-commit run --all-files",
 	"customizations": {
 		"vscode": {

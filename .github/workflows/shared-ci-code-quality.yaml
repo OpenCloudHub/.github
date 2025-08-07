@@ -1,0 +1,21 @@
+name: Code Quality
+on:
+  workflow_call:
+
+jobs:
+  code-quality:
+    name: Code Quality Checks
+    runs-on: ubuntu-latest
+    container:
+      image: reinhuddev1/code-quality:latest
+
+    steps:
+      - name: 📦 Checkout
+        uses: actions/checkout@v4
+
+      - name: 🧪 Run pre-commit
+        run: |
+          git config --global --add safe.directory $PWD
+          cp /app/.pre-commit-config.yaml .
+          pre-commit install-hooks
+          pre-commit run --all-files

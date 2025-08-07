@@ -35,6 +35,7 @@
 OpenCloudHub is a research-driven MLOps platform being developed as part of a master's thesis. The project explores how to build modern, cloud-native infrastructure for machine learning workflows—starting with a local proof-of-concept and evolving toward production-ready patterns.
 
 **Research Focus:**
+
 - 🔬 How do modern cloud-native technologies integrate into cohesive platforms?
 - ☸️ What does comprehensive Kubernetes platform engineering look like in practice?
 - 🤖 How do MLOps workflows drive platform requirements and design decisions?
@@ -42,11 +43,12 @@ OpenCloudHub is a research-driven MLOps platform being developed as part of a ma
 - 📚 How do we bridge the gap between local academic research and industry practices?
 
 **ML Workloads We're Building For:**
+
 - 🤖 **Classical ML:** Predictive models using scikit-learn
 - 🧠 **Generative AI:** Fine-tuning BERT, Qwen, and other transformer models and llms
 - 🔄 **End-to-End Pipelines:** From data ingestion to model serving
 
----
+______________________________________________________________________
 
 <h2 id="current-status">📊 Current Development Status</h2>
 
@@ -55,6 +57,7 @@ OpenCloudHub is a research-driven MLOps platform being developed as part of a ma
 <td width="33%">
 
 **🏗️ Infrastructure Foundation**
+
 - ✅ Kind cluster setup
 - ✅ Terraform/Terragrunt IaC
 - ✅ GitHub organization automation
@@ -64,6 +67,7 @@ OpenCloudHub is a research-driven MLOps platform being developed as part of a ma
 <td width="33%">
 
 **🤖 MLOps Core**
+
 - ✅ MLflow experiment tracking
 - 🚧 Argo Workflows for training
 - 🚧 KServe model serving
@@ -73,6 +77,7 @@ OpenCloudHub is a research-driven MLOps platform being developed as part of a ma
 <td width="33%">
 
 **🔐 Platform Services**
+
 - 🚧 Keycloak authentication
 - 🚧 Prometheus/Grafana observability
 - 📋 Vault secrets management
@@ -84,7 +89,7 @@ OpenCloudHub is a research-driven MLOps platform being developed as part of a ma
 
 **Legend:** ✅ Implemented • 🚧 In Progress • 📋 Planned
 
----
+______________________________________________________________________
 
 <h2 id="architecture">🏗️ Architecture Overview</h2>
 
@@ -104,15 +109,15 @@ OpenCloudHub is a research-driven MLOps platform being developed as part of a ma
 ```
 
 **Design Principles We're Exploring:**
+
 - **Research-Driven:** Documenting architectural decisions and trade-offs
 - **Cloud-Native Patterns:** Modern Kubernetes ecosystem integration
 - **GitOps-First:** Declarative infrastructure and application management
 - **Learning-Oriented:** Comprehensive documentation of the journey
 
----
+______________________________________________________________________
 
 <h2 id="repositories">📂 Project Structure</h2>
-
 
 <details open>
   <summary><strong>🛠️ Platform Team</strong></summary>
@@ -145,25 +150,26 @@ OpenCloudHub is a research-driven MLOps platform being developed as part of a ma
   </ul>
 </details>
 
-
-
-
----
+______________________________________________________________________
 
 <h2 id="get-involved">🚀 Getting Started</h2>
 
 ### 📚 For Researchers & Students
+
 - **[📖 Full Documentation](https://opencloudhub.github.io/docs)** - Detailed setup guides and architectural decisions
 - **[🎯 Local Development](https://opencloudhub.github.io/docs/getting-started/local-setup)** - Deploy the platform on your machine
 - **[📋 Project Roadmap](https://github.com/orgs/opencloudhub/projects/4)** - See what's coming next
 
 ### 🔍 For Platform Engineers
+
 - **Explore Implementation Details:** Browse the repositories above to see real-world GitOps and IaC patterns
 - **Learn Integration Patterns:** See how modern cloud-native tools work together
 - **Contribute Ideas:** Join discussions about platform engineering approaches
 
 <!-- # TODO: add some videos here -->
+
 ### 💡 Demos
+
 ```bash
 # Clone and deploy locally (requires Docker & kind)
 git clone https://github.com/opencloudhub/infra-live.git
@@ -173,30 +179,32 @@ cd infra-live/local && ./deploy.sh
 kubectl port-forward -n mlflow svc/mlflow-server 5000:5000
 ```
 
----
+______________________________________________________________________
 
 ## 🎓 Academic Context & Future Vision
 
 **Current Thesis Phase:** Building and documenting a comprehensive MLOps platform proof-of-concept
 
 **Research Contributions:**
+
 - Integration patterns for cloud-native MLOps toolchains
 - Platform engineering approaches for AI/ML teams
 - Documentation of architectural decisions and trade-offs
 
 **Future Applications:**
+
 - Foundation for university research projects requiring custom ML models and application integration
 - Template for organizations transitioning from local development to production systems
 - Personal showcase and learning resource for the cloud-native community
 - Potential baseline for SaaS offerings or consulting engagements
 
----
+______________________________________________________________________
 
 <div align="center">
   <h3>🌟 Follow the Journey</h3>
   <p><em>Building in public • Learning together • Sharing knowledge</em></p>
-  
-  <div>
+
+<div>
     <a href="https://opencloudhub.github.io/docs">
       <img src="https://img.shields.io/badge/Read%20the%20Docs-2596BE?style=for-the-badge&logo=read-the-docs&logoColor=white" alt="Documentation">
     </a>

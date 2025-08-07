@@ -1,0 +1,89 @@
+name: Python Tests
+on:
+  workflow_call:
+    inputs:
+      python-version:
+        description: "Python version to use"
+        type: string
+        default: "3.11"
+      working-directory:
+        description: "Working directory for Python project"
+        type: string
+        default: "."
+      run-coverage:
+        description: "Run coverage analysis"
+        type: boolean
+        default: true
+      coverage-threshold:
+        description: "Minimum coverage percentage"
+        type: string
+        default: "80"
+
+jobs:
+  test:
+    name: 🧪 Test Suite
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ inputs.working-directory }}
+
+    steps:
+      - name: 📦 Checkout
+        uses: actions/checkout@v4
+
+      - name: 🔍 Check for Python project
+        id: python-check
+        run: |
+          if [ -f "pyproject.toml" ] || [ -f "requirements.txt" ] || [ -f "uv.lock" ]; then
+            echo "found=true" >> $GITHUB_OUTPUT
+          else
+            echo "found=false" >> $GITHUB_OUTPUT
+            echo "⚠️ No Python project files found"
+          fi
+
+      - name: ⚡ Install uv
+        if: steps.python-check.outputs.found == 'true'
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: "0.7.19"
+          enable-cache: true
+          cache-dependency-glob: ${{ steps.python-check.outputs.cache-pattern }}
+
+      - name: 🐍 Setup Python
+        if: steps.python-check.outputs.found == 'true'
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ inputs.python-version }}
+
+      - name: 📥 Install dependencies
+        if: steps.python-check.outputs.found == 'true'
+        run: |
+          # Install testing dependencies first
+          uv pip install --system pytest
+          if [ "${{ inputs.run-coverage }}" = "true" ]; then
+            uv pip install --system pytest-cov
+          fi
+
+          # Then install project dependencies
+          if [ -f "uv.lock" ]; then
+            uv sync --locked --all-extras --dev --system
+          elif [ -f "pyproject.toml" ]; then
+            uv sync --all-extras --dev --system
+          else
+            uv pip install --system -r requirements.txt
+          fi
+
+      - name: 🧪 Run tests with coverage
+        if: steps.python-check.outputs.found == 'true' && inputs.run-coverage
+        run: |
+          uv run pytest \
+            --cov=. \
+            --cov-report=xml \
+            --cov-report=term-missing \
+            --cov-fail-under=${{ inputs.coverage-threshold }} \
+            --maxfail=3 \
+            -v
+
+      - name: 🧪 Run tests without coverage
+        if: steps.python-check.outputs.found == 'true' && !inputs.run-coverage
+        run: uv run pytest --maxfail=3 --disable-warnings -q

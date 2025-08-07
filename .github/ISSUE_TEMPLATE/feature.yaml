@@ -38,7 +38,7 @@ body:
         - MLflow server deployment
         - Database integration
         - Object storage configuration
-        
+
         Integrations:
         - Istio service mesh
         - Keycloak authentication

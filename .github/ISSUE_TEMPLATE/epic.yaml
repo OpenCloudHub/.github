@@ -12,7 +12,7 @@ body:
       placeholder: "This epic encompasses all components and capabilities needed for..."
     validations:
       required: true
-      
+
   - type: textarea
     id: context
     attributes:
