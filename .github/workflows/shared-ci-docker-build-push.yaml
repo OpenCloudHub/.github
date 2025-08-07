@@ -32,6 +32,8 @@ jobs:
   build-and-scan:
     name: 🏗️ Build & Security Scan
     runs-on: ubuntu-latest
+    env:
+      DOCKER_REPO: ${{ secrets.DOCKER_USERNAME }}/${{ inputs.repo-name }}
 
     steps:
       - name: 📦 Checkout
@@ -44,7 +46,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ inputs.docker-repo }}
+          images: ${{ env.DOCKER_REPO }}
           tags: |
             type=ref,event=branch
             type=ref,event=pr
