@@ -42,7 +42,7 @@ body:
         3. Run command '...'
         4. See error
     validations:
-      required: true
+      required: false
 
   - type: textarea
     id: environment
@@ -55,7 +55,7 @@ body:
         - Component versions: [e.g., ArgoCD v2.8.0, Istio 1.18]
         - Browser: [if relevant]
     validations:
-      required: true
+      required: false
 
   - type: textarea
     id: error_logs
