@@ -4,13 +4,18 @@ on:
     paths:
       - "containers/code-quality/Dockerfile"
       - ".github/workflows/ci-update-code-quality-image.yaml"
+      - ".pre-commit-config.yaml"
 
 jobs:
   build:
-    uses: exploring-gh-organizations/called/.github/workflows/docker.yaml@main
+    uses: opencloudhub/.github/.github/workflows/shared-ci-docker-build-push.yaml@main
     with:
       repo-name: "code-quality"
       context: "."
+      dockerfile: "containers/code-quality/Dockerfile"
+      build-args: |
+        DOCKERFILE_PATH=containers/code-quality/Dockerfile
+        PRECOMMIT_CONFIG_PATH=.pre-commit-config.yaml
     secrets:
       DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
