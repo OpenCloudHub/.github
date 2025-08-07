@@ -11,6 +11,8 @@ jobs:
     with:
       repo-name: "code-quality"
       context: "containers/code-quality"
+      build-args: |
+        PRECOMMIT_CONFIG_PATH=../../.pre-commit-config.yaml
     secrets:
       DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
