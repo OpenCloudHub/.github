@@ -5,6 +5,11 @@ on:
       - "containers/code-quality/Dockerfile"
       - ".github/workflows/ci-update-code-quality-image.yaml"
       - ".pre-commit-config.yaml"
+    branches: [main]
+  pull_request:
+    paths:
+      - "containers/code-quality/Dockerfile"
+      - ".github/workflows/ci-update-code-quality-image.yaml"
       - ".pre-commit-config.yaml"
 
 jobs:
