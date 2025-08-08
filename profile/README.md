@@ -47,47 +47,7 @@ OpenCloudHub is a research-driven MLOps platform being developed as part of a ma
 - 🤖 **Classical ML:** Predictive models using scikit-learn
 - 🧠 **Generative AI:** Fine-tuning BERT, Qwen, and other transformer models and llms
 - 🔄 **End-to-End Pipelines:** From data ingestion to model serving
-
-______________________________________________________________________
-
-<h2 id="current-status">📊 Current Development Status</h2>
-
-<table>
-<tr>
-<td width="33%">
-
-**🏗️ Infrastructure Foundation**
-
-- ✅ Kind cluster setup
-- ✅ Terraform/Terragrunt IaC
-- ✅ GitHub organization automation
-- 🚧 Istio service mesh integration
-
-</td>
-<td width="33%">
-
-**🤖 MLOps Core**
-
-- ✅ MLflow experiment tracking
-- 🚧 Argo Workflows for training
-- 🚧 KServe model serving
-- 📋 Multi-tenant ML pipelines
-
-</td>
-<td width="33%">
-
-**🔐 Platform Services**
-
-- 🚧 Keycloak authentication
-- 🚧 Prometheus/Grafana observability
-- 📋 Vault secrets management
-- 📋 Multi-environment deployment
-
-</td>
-</tr>
-</table>
-
-**Legend:** ✅ Implemented • 🚧 In Progress • 📋 Planned
+-
 
 ______________________________________________________________________
 
