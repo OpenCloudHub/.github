@@ -11,14 +11,6 @@ default_install_hook_types:
   - pre-commit
   - commit-msg
 repos:
-  #
-  # Documentation Here:
-  # https://gatlenculp.github.io/gatlens-opinionated-template/precommit/
-  #
-  # ---------------------------------------------------------------------------- #
-  #                              🔄 Pre-Commit Hooks                             #
-  # ---------------------------------------------------------------------------- #
-
   # ----------------------------- 🔒 Security Tools ---------------------------- #
 
   - repo: https://github.com/gitleaks/gitleaks
@@ -61,12 +53,12 @@ repos:
         additional_dependencies: ["@biomejs/biome@1.9.4"]
 
   ### Java Tools ###
-  - repo: https://github.com/macisamuele/language-formatters-pre-commit-hooks
-    rev: v2.14.0
-    hooks:
-      - id: pretty-format-java
-        name: "☕ java · Format Java code"
-        args: [--autofix]
+  # - repo: https://github.com/macisamuele/language-formatters-pre-commit-hooks
+  #   rev: v2.14.0
+  #   hooks:
+  #     - id: pretty-format-java
+  #       name: "☕ java · Format Java code"
+  #       args: [--autofix]
 
   ### Data & Config Validation ###
   - repo: https://github.com/python-jsonschema/check-jsonschema
@@ -133,50 +125,6 @@ repos:
         name: "🐳 docker · Lint Dockerfiles"
         args: ["--ignore", "DL3013", "--ignore", "DL3016", "--ignore", "DL3018"]
 
-  ### SQL ###
-  - repo: https://github.com/sqlfluff/sqlfluff
-    rev: 3.3.0
-    hooks:
-      - id: sqlfluff-fix
-        name: "📊 SQL · Attempts to fix rule violations."
-
-  ### Notebooks ###
-  - repo: https://github.com/nbQA-dev/nbQA
-    rev: 1.9.1
-    hooks:
-      - id: nbqa
-        entry: nbqa mdformat
-        name: "📓 notebook · Format markdown cells"
-        args: ["--nbqa-md"]
-        types: [jupyter]
-        additional_dependencies:
-          - mdformat
-          - mdformat-gfm
-          - mdformat-ruff
-          - mdformat-frontmatter
-          - ruff
-      # TODO: Convert to pyright
-      - id: nbqa-mypy
-        name: "📓 notebook · Type-check cells"
-
-  ### PNG Images ###
-  - repo: https://github.com/shssoichiro/oxipng
-    rev: v9.1.4
-    hooks:
-      - id: oxipng
-        name: "🖼️ images · Optimize PNG files"
-        args: ["-o", "4", "--strip", "safe", "--alpha"]
-
-  ### Additional File Types ###
-  - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: v4.0.0-alpha.8
-    hooks:
-      - id: prettier
-        name: "✨ misc-files · Format misc web files"
-        types_or: [yaml, html, scss]
-        additional_dependencies:
-          - prettier@3.4.2
-
   # -------------------------- 📝 Spell Checking Tools ------------------------- #
 
   - repo: https://github.com/crate-ci/typos
@@ -232,19 +180,3 @@ repos:
         name: "🌳 git · Detect conflict markers"
       - id: forbid-new-submodules
         name: "🌳 git · Prevent submodule creation"
-
-  # ---------------------------------------------------------------------------- #
-  #                            📝 Commit Message Hooks                           #
-  # ---------------------------------------------------------------------------- #
-  # --------------------------- ✍️ Git Commit Quality -------------------------- #
-# FIXME: integrate
-### Commit Message Standards ###
-# - repo: https://github.com/commitizen-tools/commitizen
-#   rev: v4.4.1
-#   hooks:
-#     - id: commitizen
-#       name: "🌳 git · Validate commit message"
-#       stages: [commit-msg]
-#       additional_dependencies: [cz-conventional-gitmoji]
-#       entry: env CZ_SCHEMA_PATTERN="^\\[(FEATURE|TASK|BUG|RESEARCH|DOCUMENTATION)\\]:\\s.+" cz check
-#       args: ["--allow-abort", "--commit-msg-file"]
