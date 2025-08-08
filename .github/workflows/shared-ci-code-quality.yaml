@@ -1,17 +1,78 @@
 name: Shared Code Quality
 on:
   workflow_call:
+    inputs:
+      config-url:
+        description: 'URL to the pre-commit config file'
+        type: string
+        default: https://raw.githubusercontent.com/opencloudhub/.github/main/.pre-commit-config.yaml
 
 jobs:
   code-quality:
-    name: Code Quality Checks
+    name: 🔍 Code Quality
     runs-on: ubuntu-latest
-    container:
-      image: opencloudhub/code-quality:latest
 
     steps:
-      - name: 📦 Checkout
+      - name: 📦 Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: 🧪 Run pre-commit
-        run: pre-commit run --all-files
+      - name: 📥 Fetch pre-commit config
+        run: |
+          curl -sSL "${{ inputs.config-url }}" -o .pre-commit-config.yaml
+          echo "CONFIG_HASH=$(sha256sum .pre-commit-config.yaml | cut -d' ' -f1)" >> $GITHUB_ENV
+
+      - name: 🔧 Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 💾 Cache system dependencies
+        id: cache-deps
+        uses: actions/cache@v4
+        with:
+          path: |
+            /usr/local/bin/hadolint
+            /usr/local/bin/shellcheck
+            /usr/local/bin/typos
+          key: system-deps-${{ runner.os }}-v3
+
+      - name: 🔨 Install system dependencies
+        if: steps.cache-deps.outputs.cache-hit != 'true'
+        run: |
+          # Install hadolint
+          sudo curl -sSL https://github.com/hadolint/hadolint/releases/download/v2.12.0/hadolint-Linux-x86_64 \
+            -o /usr/local/bin/hadolint
+          sudo chmod +x /usr/local/bin/hadolint
+
+          # Install shellcheck
+          sudo curl -sSL https://github.com/koalaman/shellcheck/releases/download/v0.10.0/shellcheck-v0.10.0.linux.x86_64.tar.xz \
+            | sudo tar -xJ -C /usr/local/bin --strip-components=1 shellcheck-v0.10.0/shellcheck
+          sudo chmod +x /usr/local/bin/shellcheck
+
+          # Install typos for spell checking (Rust binary)
+          sudo curl -sSL https://github.com/crate-ci/typos/releases/download/v1.30.3/typos-v1.30.3-x86_64-unknown-linux-musl.tar.gz \
+            | sudo tar -xz -C /usr/local/bin ./typos
+          sudo chmod +x /usr/local/bin/typos
+
+      - name: 🔨 Install Node.js tools
+        run: |
+          # Install biome globally for pre-commit to find it
+          npm install -g @biomejs/biome
+
+      - name: 💾 Cache pre-commit environments
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pre-commit
+          key: pre-commit-${{ runner.os }}-${{ env.CONFIG_HASH }}
+
+      - name: 🚀 Run pre-commit
+        run: |
+          pip install pre-commit
+          pre-commit run --all-files --color=always
