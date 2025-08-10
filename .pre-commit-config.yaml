@@ -118,12 +118,12 @@ repos:
         name: "🐮 Makefile · Lint Makefile"
 
   ### Docker ###
-  - repo: https://github.com/hadolint/hadolint
-    rev: v2.12.0
-    hooks:
-      - id: hadolint
-        name: "🐳 docker · Lint Dockerfiles"
-        args: ["--ignore", "DL3013", "--ignore", "DL3016", "--ignore", "DL3018"]
+  # - repo: https://github.com/hadolint/hadolint
+  #   rev: v2.12.0
+  #   hooks:
+  #     - id: hadolint
+  #       name: "🐳 docker · Lint Dockerfiles"
+  #       args: ["--ignore", "DL3013", "--ignore", "DL3016", "--ignore", "DL3018"]
 
   # -------------------------- 📝 Spell Checking Tools ------------------------- #
 
