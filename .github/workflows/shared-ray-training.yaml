@@ -1,0 +1,195 @@
+name: Shared Ray Training Workflow
+
+on:
+  workflow_call:
+    inputs:
+      compute_type:
+        description: 'Compute configuration'
+        required: true
+        type: choice
+        options:
+          - 'cpu-light'      # 1 worker, 1 CPU, 2Gi RAM
+          - 'cpu-medium'     # 1 worker, 2 CPU, 4Gi RAM  
+          - 'cpu-heavy'      # 2 workers, 2 CPU, 4Gi RAM each
+          - 'gpu-small'      # 1 GPU worker, 2 CPU, 8Gi RAM, 1 GPU
+          - 'gpu-medium'     # 1 GPU worker, 4 CPU, 16Gi RAM, 1 GPU
+      docker_image:
+        description: 'Docker image to use for training'
+        required: true
+        type: string
+      entrypoint:
+        description: 'Training script entrypoint'
+        required: true
+        type: string
+      extra_args:
+        description: 'Additional arguments for the entrypoint'
+        required: false
+        type: string
+        default: ''
+      experiment_name:
+        description: 'MLflow experiment name'
+        required: false
+        type: string
+        default: 'default-experiment'
+
+jobs:
+  train:
+    name: 🏃 Run Ray Training
+    runs-on: self-hosted-local
+    steps:
+      - name: Install kubectl
+        run: |
+          curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+          chmod +x kubectl
+          mkdir -p ~/.local/bin
+          mv kubectl ~/.local/bin/
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Configure kubectl
+        run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > ~/.kube/config
+          ~/.local/bin/kubectl cluster-info
+
+      - name: Set compute configuration
+        id: config
+        run: |
+          case "${{ inputs.compute_type }}" in
+            "cpu-light")
+              echo "replicas=1" >> $GITHUB_OUTPUT
+              echo "cpu=1" >> $GITHUB_OUTPUT
+              echo "memory=2Gi" >> $GITHUB_OUTPUT
+              echo "node_selector=node.opencloudhub.org/application: \"true\"" >> $GITHUB_OUTPUT
+              echo "gpu_config=" >> $GITHUB_OUTPUT
+              ;;
+            "cpu-medium")
+              echo "replicas=1" >> $GITHUB_OUTPUT
+              echo "cpu=2" >> $GITHUB_OUTPUT
+              echo "memory=4Gi" >> $GITHUB_OUTPUT
+              echo "node_selector=node.opencloudhub.org/application: \"true\"" >> $GITHUB_OUTPUT
+              echo "gpu_config=" >> $GITHUB_OUTPUT
+              ;;
+            "cpu-heavy")
+              echo "replicas=2" >> $GITHUB_OUTPUT
+              echo "cpu=2" >> $GITHUB_OUTPUT
+              echo "memory=4Gi" >> $GITHUB_OUTPUT
+              echo "node_selector=node.opencloudhub.org/application: \"true\"" >> $GITHUB_OUTPUT
+              echo "gpu_config=" >> $GITHUB_OUTPUT
+              ;;
+            "gpu-small")
+              echo "replicas=1" >> $GITHUB_OUTPUT
+              echo "cpu=2" >> $GITHUB_OUTPUT
+              echo "memory=8Gi" >> $GITHUB_OUTPUT
+              echo "node_selector=node.opencloudhub.org/gpu-training: \"true\"" >> $GITHUB_OUTPUT
+              echo "gpu_config=nvidia.com/gpu: \"1\"" >> $GITHUB_OUTPUT
+              ;;
+            "gpu-medium")
+              echo "replicas=1" >> $GITHUB_OUTPUT
+              echo "cpu=4" >> $GITHUB_OUTPUT
+              echo "memory=16Gi" >> $GITHUB_OUTPUT
+              echo "node_selector=node.opencloudhub.org/gpu-training: \"true\"" >> $GITHUB_OUTPUT
+              echo "gpu_config=nvidia.com/gpu: \"1\"" >> $GITHUB_OUTPUT
+              ;;
+          esac
+
+      - name: Submit Ray Job
+        id: submit
+        run: |
+          JOB_NAME=${{ github.event.repository.name }}-${{ github.run_id }}
+
+          # Build GPU resource config if needed
+          GPU_RESOURCES=""
+          if [[ -n "${{ steps.config.outputs.gpu_config }}" ]]; then
+            GPU_RESOURCES="limits:\n              ${{ steps.config.outputs.gpu_config }}"
+          fi
+
+          cat <<EOF | ~/.local/bin/kubectl apply -f -
+          apiVersion: ray.io/v1
+          kind: RayJob
+          metadata:
+            name: ${JOB_NAME}
+            namespace: ai
+            labels:
+              repo: ${{ github.event.repository.name }}
+              run-id: "${{ github.run_id }}"
+              compute-type: "${{ inputs.compute_type }}"
+          spec:
+            shutdownAfterJobFinishes: true
+            ttlSecondsAfterFinished: 300
+            rayClusterSpec:
+              rayVersion: "2.48.0"
+              headGroupSpec:
+                serviceType: ClusterIP
+                template:
+                  spec:
+                    nodeSelector:
+                      ${{ steps.config.outputs.node_selector }}
+                    containers:
+                    - name: ray-head
+                      image: ${{ inputs.docker_image }}
+                      resources:
+                        requests:
+                          cpu: "${{ steps.config.outputs.cpu }}"
+                          memory: "${{ steps.config.outputs.memory }}"
+                        $(echo -e "${GPU_RESOURCES}")
+                      env:
+                      - name: MLFLOW_TRACKING_URI
+                        value: http://mlflow-tracking.ai.svc.cluster.local
+                      - name: MLFLOW_EXPERIMENT_NAME
+                        value: ${{ inputs.experiment_name }}
+              workerGroupSpecs:
+              - replicas: ${{ steps.config.outputs.replicas }}
+                groupName: worker
+                template:
+                  spec:
+                    nodeSelector:
+                      ${{ steps.config.outputs.node_selector }}
+                    containers:
+                    - name: ray-worker
+                      image: ${{ inputs.docker_image }}
+                      resources:
+                        requests:
+                          cpu: "${{ steps.config.outputs.cpu }}"
+                          memory: "${{ steps.config.outputs.memory }}"
+                        $(echo -e "${GPU_RESOURCES}")
+                      env:
+                      - name: MLFLOW_TRACKING_URI
+                        value: http://mlflow-tracking.ai.svc.cluster.local
+                      - name: MLFLOW_EXPERIMENT_NAME
+                        value: ${{ inputs.experiment_name }}
+            entrypoint: ${{ inputs.entrypoint }} ${{ inputs.extra_args }}
+          EOF
+
+          echo "job_name=${JOB_NAME}" >> $GITHUB_OUTPUT
+
+      - name: 📊 Provide Developer Monitoring Commands
+        run: |
+          JOB_NAME=${{ steps.submit.outputs.job_name }}
+
+          echo "========================================="
+          echo "🚀 RAY JOB SUBMITTED: ${JOB_NAME}"
+          echo "🎯 Repository: ${{ github.event.repository.name }}"
+          echo "💻 Compute: ${{ inputs.compute_type }}"
+          echo "🏷️  Image: ${{ inputs.docker_image }}"
+          echo "🔧 Entrypoint: ${{ inputs.entrypoint }}"
+          echo "========================================="
+          echo ""
+          echo "📋 MONITORING COMMANDS:"
+          echo ""
+          echo "🔍 CHECK STATUS:"
+          echo "   kubectl get rayjob -n ai ${JOB_NAME}"
+          echo ""
+          echo "📝 VIEW LOGS:"
+          echo "   kubectl logs -n ai -l job-name=${JOB_NAME} -f"
+          echo ""
+          echo "🌐 RAY DASHBOARD:"
+          echo "   kubectl port-forward -n ai svc/${JOB_NAME}-head-svc 8265:8265"
+          echo "   http://localhost:8265"
+          echo ""
+          echo "🔬 MLFLOW UI:"
+          echo "   kubectl port-forward -n ai svc/mlflow-tracking 5000:80"
+          echo "   http://localhost:5000"
+          echo ""
+          echo "🧹 CLEANUP:"
+          echo "   kubectl delete rayjob -n ai ${JOB_NAME}"
+          echo "========================================"
