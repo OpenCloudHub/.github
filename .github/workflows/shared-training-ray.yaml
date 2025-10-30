@@ -128,7 +128,7 @@ jobs:
                         $(echo -e "${GPU_RESOURCES}")
                       env:
                       - name: MLFLOW_TRACKING_URI
-                        value: http://mlflow-tracking.ai.svc.cluster.local
+                        value: http://mlflow.ai.svc.cluster.local
                       - name: MLFLOW_EXPERIMENT_NAME
                         value: ${{ inputs.experiment_name }}
               workerGroupSpecs:
