@@ -1,0 +1,150 @@
+name: Shared Argo ML Workflow
+
+on:
+  workflow_call:
+    inputs:
+      model_name:
+        description: 'Model name (e.g., wine-classifier)'
+        required: true
+        type: string
+      experiment_name:
+        description: 'MLflow experiment name'
+        required: true
+        type: string
+      compute_type:
+        description: 'Compute configuration'
+        required: true
+        type: string
+      approval_mode:
+        description: 'Approval mode (manual or automatic)'
+        required: false
+        type: string
+        default: 'manual'
+      comparison_metric:
+        description: 'Metric to compare (accuracy, f1_score, etc.)'
+        required: false
+        type: string
+        default: 'accuracy'
+      comparison_direction:
+        description: 'Direction for metric comparison (higher or lower)'
+        required: false
+        type: string
+        default: 'higher'
+      comparison_threshold:
+        description: 'Minimum improvement threshold (e.g., 0.05 = 5%)'
+        required: false
+        type: string
+        default: '0.05'
+      training_image:
+        description: 'Docker image with training code'
+        required: true
+        type: string
+      training_entrypoint:
+        description: 'Training script entrypoint'
+        required: true
+        type: string
+      training_args:
+        description: 'Additional training arguments'
+        required: false
+        type: string
+        default: ''
+
+jobs:
+  submit-workflow:
+    name: 🚀 Submit ML Lifecycle Workflow
+    runs-on: self-hosted-local
+    steps:
+      - name: Install kubectl
+        run: |
+          curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+          chmod +x kubectl
+          mkdir -p ~/.local/bin
+          mv kubectl ~/.local/bin/
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Configure kubectl
+        run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > ~/.kube/config
+          ~/.local/bin/kubectl cluster-info
+
+      - name: Submit Argo Workflow
+        id: submit
+        run: |
+          WORKFLOW_NAME=${{ inputs.model_name }}-$(date +%s)
+
+          cat <<EOF | ~/.local/bin/kubectl create -n ai -f -
+          apiVersion: argoproj.io/v1alpha1
+          kind: Workflow
+          metadata:
+            generateName: ${{ inputs.model_name }}-
+            labels:
+              repo: ${{ github.event.repository.name }}
+              run-id: "${{ github.run_id }}"
+              model: "${{ inputs.model_name }}"
+          spec:
+            serviceAccountName: workflow-executor
+            workflowTemplateRef:
+              name: ml-complete-lifecycle
+            arguments:
+              parameters:
+              - name: model_name
+                value: "${{ inputs.model_name }}"
+              - name: experiment_name
+                value: "${{ inputs.experiment_name }}"
+              - name: compute_type
+                value: "${{ inputs.compute_type }}"
+              - name: approval_mode
+                value: "${{ inputs.approval_mode }}"
+              - name: comparison_metric
+                value: "${{ inputs.comparison_metric }}"
+              - name: comparison_direction
+                value: "${{ inputs.comparison_direction }}"
+              - name: comparison_threshold
+                value: "${{ inputs.comparison_threshold }}"
+              - name: training_image
+                value: "${{ inputs.training_image }}"
+              - name: training_entrypoint
+                value: "${{ inputs.training_entrypoint }}"
+              - name: training_args
+                value: "${{ inputs.training_args }}"
+          EOF
+
+          # Get the actual workflow name
+          sleep 2
+          ACTUAL_NAME=$(~/.local/bin/kubectl get workflows -n ai -l repo=${{ github.event.repository.name }},run-id=${{ github.run_id }} -o jsonpath='{.items[0].metadata.name}')
+          echo "workflow_name=${ACTUAL_NAME}" >> $GITHUB_OUTPUT
+
+      - name: 📊 Provide Monitoring Commands
+        run: |
+          WORKFLOW_NAME=${{ steps.submit.outputs.workflow_name }}
+
+          echo "========================================="
+          echo "🚀 ARGO WORKFLOW SUBMITTED: ${WORKFLOW_NAME}"
+          echo "🎯 Model: ${{ inputs.model_name }}"
+          echo "💻 Compute: ${{ inputs.compute_type }}"
+          echo "🏷️  Image: ${{ inputs.training_image }}"
+          echo "🔧 Approval: ${{ inputs.approval_mode }}"
+          echo "========================================="
+          echo ""
+          echo "📋 MONITORING COMMANDS:"
+          echo ""
+          echo "🔍 CHECK STATUS:"
+          echo "   kubectl get workflow -n ai ${WORKFLOW_NAME}"
+          echo ""
+          echo "📝 VIEW LOGS:"
+          echo "   kubectl logs -n ai -l workflows.argoproj.io/workflow=${WORKFLOW_NAME} -f"
+          echo ""
+          echo "🌐 ARGO UI:"
+          echo "   https://argo.ai.internal.opencloudhub.org"
+          echo ""
+          echo "🔬 MLFLOW UI:"
+          echo "   kubectl port-forward -n ai svc/mlflow 5000:5000"
+          echo "   http://localhost:5000"
+          echo ""
+          echo "✅ APPROVE WORKFLOW (if manual approval):"
+          echo "   argo resume -n ai ${WORKFLOW_NAME}"
+          echo ""
+          echo "🧹 CLEANUP:"
+          echo "   kubectl delete workflow -n ai ${WORKFLOW_NAME}"
+          echo "========================================"
