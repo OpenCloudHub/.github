@@ -25,11 +25,11 @@ on:
         required: false
         type: string
         default: 'accuracy'
-      comparison_direction:
-        description: 'Direction for metric comparison (higher or lower)'
+      higher_is_better:
+        description: 'Whether higher metric values are better (true/false)'
         required: false
-        type: string
-        default: 'higher'
+        type: boolean
+        default: true
       comparison_threshold:
         description: 'Minimum improvement threshold (e.g., 0.05 = 5%)'
         required: false
@@ -98,8 +98,8 @@ jobs:
                 value: "${{ inputs.approval_mode }}"
               - name: comparison_metric
                 value: "${{ inputs.comparison_metric }}"
-              - name: comparison_direction
-                value: "${{ inputs.comparison_direction }}"
+              - name: higher_is_better
+                value: "${{ inputs.higher_is_better }}"
               - name: comparison_threshold
                 value: "${{ inputs.comparison_threshold }}"
               - name: training_image
