@@ -92,6 +92,8 @@ jobs:
               name: mlops-pipeline
             arguments:
               parameters:
+              - name: repo_name
+                value: "${{ inputs.repo_name }}"
               - name: model_name
                 value: "${{ inputs.model_name }}"
               - name: experiment_name
