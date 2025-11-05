@@ -85,7 +85,7 @@ jobs:
           spec:
             serviceAccountName: workflow-executor
             workflowTemplateRef:
-              name: ml-complete-lifecycle
+              name: mlops-pipeline
             arguments:
               parameters:
               - name: model_name
