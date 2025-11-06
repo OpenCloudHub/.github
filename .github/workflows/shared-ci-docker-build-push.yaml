@@ -14,6 +14,11 @@ on:
         description: "Path to Dockerfile relative to context"
         type: string
         default: "Dockerfile"
+      target:
+        description: "Target build stage (empty = final stage)"
+        type: string
+        required: false
+        default: ""
       build-args:
         description: "Build arguments (key=value, one per line)"
         type: string
@@ -58,6 +63,7 @@ jobs:
         with:
           context: ${{ inputs.context }}
           file: ${{ inputs.context }}/${{ inputs.dockerfile }}
+          target: ${{ inputs.target }}
           build-args: ${{ inputs.build-args }}
           load: true # Load into local Docker daemon
           tags: ${{ steps.meta.outputs.tags }}
@@ -87,6 +93,7 @@ jobs:
         with:
           context: ${{ inputs.context }}
           file: ${{ inputs.context }}/${{ inputs.dockerfile }}
+          target: ${{ inputs.target }}
           build-args: ${{ inputs.build-args }}
           push: true
           tags: ${{ steps.meta.outputs.tags }}
