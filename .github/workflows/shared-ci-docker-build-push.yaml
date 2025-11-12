@@ -36,7 +36,7 @@ on:
 jobs:
   build-and-scan:
     name: 🏗️ Build & Security Scan
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     env:
       DOCKER_REPO: ${{ secrets.DOCKER_USERNAME }}/${{ inputs.repo-name }}
 
