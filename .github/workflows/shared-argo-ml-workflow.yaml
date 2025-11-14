@@ -1,4 +1,4 @@
-name: Shared Argo ML Workflow
+name: Shared MLOPS Pipeline
 
 on:
   workflow_call:
@@ -13,6 +13,10 @@ on:
         type: string
       experiment_name:
         description: 'MLflow experiment name'
+        required: true
+        type: string
+      dvc_data_version:
+        description: "Data version to use for training"
         required: true
         type: string
       compute_type:
@@ -98,6 +102,8 @@ jobs:
                 value: "${{ inputs.model_name }}"
               - name: experiment_name
                 value: "${{ inputs.experiment_name }}"
+              - name: dvc_data_version:
+                value: ${{ inputs.dvc_data_version }}"
               - name: compute_type
                 value: "${{ inputs.compute_type }}"
               - name: approval_mode
