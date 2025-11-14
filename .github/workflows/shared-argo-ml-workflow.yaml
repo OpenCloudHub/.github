@@ -102,7 +102,7 @@ jobs:
                 value: "${{ inputs.model_name }}"
               - name: experiment_name
                 value: "${{ inputs.experiment_name }}"
-              - name: dvc_data_version:
+              - name: dvc_data_version
                 value: "${{ inputs.dvc_data_version }}"
               - name: compute_type
                 value: "${{ inputs.compute_type }}"
