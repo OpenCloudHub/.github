@@ -3,22 +3,32 @@ name: Shared MLOPS Pipeline
 on:
   workflow_call:
     inputs:
-      repo_name:  
-        description: 'GitHub repository name'
-        required: true
-        type: string
       model_name:
         description: 'Model name (e.g., wine-classifier)'
-        required: true
-        type: string
-      experiment_name:
-        description: 'MLflow experiment name'
         required: true
         type: string
       dvc_data_version:
         description: "Data version to use for training"
         required: true
         type: string
+      experiment_name:
+        description: 'MLflow experiment name'
+        required: true
+        type: string
+      training_entrypoint:
+        description: 'Training script entrypoint'
+        required: true
+        type: string
+      training_args:
+        description: 'Additional training arguments'
+        required: false
+        type: string
+        default: ''
+      image_tag:
+        description: 'Image tag to use (latest, main-abc1234, etc.)'
+        required: true
+        type: string
+        default: 'latest'
       compute_type:
         description: 'Compute configuration'
         required: true
@@ -33,7 +43,7 @@ on:
         required: false
         type: string
         default: 'accuracy'
-      higher_is_better:
+      comparison_higher_is_better:
         description: 'Whether higher metric values are better (true/false)'
         required: false
         type: boolean
@@ -43,20 +53,7 @@ on:
         required: false
         type: string
         default: '0.05'
-      training_image:
-        description: 'Docker image with training code'
-        required: true
-        type: string
-      training_entrypoint:
-        description: 'Training script entrypoint'
-        required: true
-        type: string
-      training_args:
-        description: 'Additional training arguments'
-        required: false
-        type: string
-        default: ''
-
+      
 jobs:
   submit-workflow:
     name: 🚀 Submit ML Lifecycle Workflow
@@ -75,6 +72,47 @@ jobs:
           mkdir -p ~/.kube
           echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > ~/.kube/config
           ~/.local/bin/kubectl cluster-info
+
+      - name: Resolve and validate image tag
+        id: resolve_image
+        run: |
+          INPUT_TAG="${{ inputs.image_tag }}"
+          # Docker repo name always determined by model name
+          DOCKER_REPO="${{ secrets.DOCKER_USERNAME }}/${{ inputs.model_name }}"
+          
+          if [ "$INPUT_TAG" = "latest" ]; then
+            # Get latest commit SHA from main branch
+            COMMIT_SHA=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+              "https://api.github.com/repos/${{ github.repository_owner }}/${{ github.event.repository.name }}/commits/main" \
+              | jq -r '.sha[0:7]')
+            
+            RESOLVED_TAG="main-${COMMIT_SHA}"
+            echo "✅ Resolved 'latest' to: ${RESOLVED_TAG}"
+          else
+            RESOLVED_TAG="$INPUT_TAG"
+            echo "✅ Using explicit tag: ${RESOLVED_TAG}"
+          fi
+          
+          # Validate image exists in Docker Hub
+          echo "🔍 Validating image exists: ${DOCKER_REPO}:${RESOLVED_TAG}"
+          
+          TOKEN=$(curl -s "https://auth.docker.io/token?service=registry.docker.io&scope=repository:${DOCKER_REPO}:pull" \
+            | jq -r '.token')
+          
+          IMAGE_EXISTS=$(curl -s -o /dev/null -w "%{http_code}" \
+            -H "Authorization: Bearer ${TOKEN}" \
+            "https://registry-1.docker.io/v2/${DOCKER_REPO}/manifests/${RESOLVED_TAG}")
+          
+          if [ "$IMAGE_EXISTS" = "200" ]; then
+            echo "✅ Image validated: ${DOCKER_REPO}:${RESOLVED_TAG}"
+            echo "resolved_tag=${RESOLVED_TAG}" >> $GITHUB_OUTPUT
+            echo "full_image=${DOCKER_REPO}:${RESOLVED_TAG}" >> $GITHUB_OUTPUT
+          else
+            echo "❌ Image not found: ${DOCKER_REPO}:${RESOLVED_TAG}"
+            echo "   HTTP Status: ${IMAGE_EXISTS}"
+            echo "   Please build the image first or use an existing tag"
+            exit 1
+          fi
 
       - name: Submit Argo Workflow
         id: submit
@@ -96,8 +134,6 @@ jobs:
               name: mlops-pipeline
             arguments:
               parameters:
-              - name: repo_name
-                value: "${{ inputs.repo_name }}"
               - name: model_name
                 value: "${{ inputs.model_name }}"
               - name: experiment_name
@@ -112,10 +148,10 @@ jobs:
                 value: "${{ inputs.comparison_metric }}"
               - name: higher_is_better
                 value: "${{ inputs.higher_is_better }}"
-              - name: comparison_threshold
-                value: "${{ inputs.comparison_threshold }}"
+              - name: comparison_higher_is_better
+                value: "${{ inputs.comparison_higher_is_better }}"
               - name: training_image
-                value: "${{ inputs.training_image }}"
+                value: "${{ steps.resolve_image.outputs.full_image }}"
               - name: training_entrypoint
                 value: "${{ inputs.training_entrypoint }}"
               - name: training_args
