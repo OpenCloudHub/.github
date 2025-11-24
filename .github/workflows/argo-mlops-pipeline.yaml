@@ -482,7 +482,7 @@ jobs:
 #         run: |
 #           WORKFLOW_NAME=${{ inputs.model_name }}-$(date +%s)
 
-#           cat <<EOF | ~/.local/bin/kubectl create -n ai -f -
+#           cat <<EOF | ~/.local/bin/kubectl create -n mlops -f -
 #           apiVersion: argoproj.io/v1alpha1
 #           kind: Workflow
 #           metadata:
@@ -525,7 +525,7 @@ jobs:
 
 #           # Get the actual workflow name
 #           sleep 2
-#           ACTUAL_NAME=$(~/.local/bin/kubectl get workflows -n ai -l repo=${{ github.event.repository.name }},run-id=${{ github.run_id }} -o jsonpath='{.items[0].metadata.name}')
+#           ACTUAL_NAME=$(~/.local/bin/kubectl get workflows -n mlops -l repo=${{ github.event.repository.name }},run-id=${{ github.run_id }} -o jsonpath='{.items[0].metadata.name}')
 #           echo "workflow_name=${ACTUAL_NAME}" >> $GITHUB_OUTPUT
 
 #       - name: 📊 Provide Monitoring Links
@@ -549,10 +549,10 @@ jobs:
 #           echo "📊 MONITORING:"
 #           echo ""
 #           echo "🌐 Argo Workflow:"
-#           echo "   https://argo.ai.internal.opencloudhub.org/workflows/ai/${WORKFLOW_NAME}"
+#           echo "   https://argo.internal.opencloudhub.org/workflows/ai/${WORKFLOW_NAME}"
 #           echo ""
 #           echo "🔬 MLflow UI:"
-#           echo "   https://mlflow.ai.internal.opencloudhub.org"
+#           echo "   https://mlflow.internal.opencloudhub.org"
 #           echo "   → Navigate to experiment: ${{ inputs.experiment_name }}"
 #           echo ""
 #           echo "========================================="
@@ -560,12 +560,12 @@ jobs:
 #           echo "🔧 DIRECT CLUSTER ACCESS (if available):"
 #           echo ""
 #           echo "📋 Check workflow status:"
-#           echo "   kubectl get workflow -n ai ${WORKFLOW_NAME}"
+#           echo "   kubectl get workflow -n mlops ${WORKFLOW_NAME}"
 #           echo ""
 #           echo "📝 Stream logs:"
-#           echo "   kubectl logs -n ai -l workflows.argoproj.io/workflow=${WORKFLOW_NAME} -f"
+#           echo "   kubectl logs -n mlops -l workflows.argoproj.io/workflow=${WORKFLOW_NAME} -f"
 #           echo ""
 #           echo "✅ Approve workflow (if manual approval):"
-#           echo "   argo resume -n ai ${WORKFLOW_NAME}"
+#           echo "   argo resume -n mlops ${WORKFLOW_NAME}"
 #           echo ""
 #           echo "========================================"
