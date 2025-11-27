@@ -107,7 +107,7 @@ runs:
         echo "full-tag=${FULL_TAG}" >> $GITHUB_OUTPUT
 
     # =========================================================================
-    # Step 2: Verify DVC tracking exists (.dvc files or dvc.lock) (⚠️ Expects dataset name as path in pipelines/ or data/ folder in registry)
+    # Step 2: Verify DVC tracking exists (.dvc files or dvc.lock)
     # =========================================================================
     - name: 📂 Check DVC tracking
       id: check-tracking
@@ -206,8 +206,17 @@ runs:
         # Install AWS CLI if needed
         if ! command -v aws &> /dev/null; then
           echo "📦 Installing AWS CLI..."
-          pip install -q awscli 2>/dev/null || pip install -q --user awscli 2>/dev/null
+          curl -sL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "/tmp/awscliv2.zip"
+          unzip -q /tmp/awscliv2.zip -d /tmp
+          /tmp/aws/install -i ~/.local/aws-cli -b ~/.local/bin --update
+          rm -rf /tmp/awscliv2.zip /tmp/aws
           export PATH="$HOME/.local/bin:$PATH"
+
+          if ! command -v aws &> /dev/null; then
+            echo "❌ Failed to install AWS CLI"
+            exit 1
+          fi
+          echo "✅ AWS CLI installed"
         fi
 
         # Build S3 options
