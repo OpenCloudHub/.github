@@ -8,7 +8,12 @@ on:
         required: true
         type: string
       dvc_data_version:
-        description: "Data version to use for training"
+        description: "Data version to use for training (latest or specific like v1.0.0)"
+        required: false
+        type: string
+        default: 'latest'
+      dvc_dataset:
+        description: "Dataset name in DVC registry"
         required: true
         type: string
       experiment_name:
@@ -25,12 +30,12 @@ on:
         type: string
         default: ''
       training_image_tag:
-        description: 'Training image tag (latest or specific tag like main-abc1234)'
+        description: 'Training image tag (latest or specific like abc1234)'
         required: false
         type: string
         default: 'latest'
       serving_image_tag:
-        description: 'Serving image tag (latest or specific tag like main-abc1234)'
+        description: 'Serving image tag (latest or specific like abc1234)'
         required: false
         type: string
         default: 'latest'
@@ -64,176 +69,52 @@ jobs:
     name: 🚀 Submit ML Lifecycle Workflow
     runs-on: self-hosted-local
     steps:
-      - uses: OpenCloudHub/.github/actions/setup-kubectl@main
+      # =========================================================================
+      # Setup
+      # =========================================================================
+      - name: 🔧 Setup kubectl
+        uses: OpenCloudHub/.github/.github/actions/setup-kubectl@main
         with:
           kube-config: ${{ secrets.KUBE_CONFIG }}
 
-      - name: Resolve training image
-        id: resolve_training
-        run: |
-          INPUT_TAG="${{ inputs.training_image_tag }}"
-          DOCKER_REPO="${{ secrets.DOCKER_USERNAME }}/${{ inputs.model_name }}-training"
+      # =========================================================================
+      # Resolve versions
+      # =========================================================================
+      - name: 📊 Resolve DVC data version
+        id: data
+        uses: OpenCloudHub/.github/.github/actions/resolve-dvc-version@main
+        with:
+          dataset: ${{ inputs.dvc_dataset }}
+          version: ${{ inputs.dvc_data_version }}
+          dvc-repo: ${{ vars.DVC_REPO_URL }}
 
-          echo "🔍 Resolving training image: ${DOCKER_REPO}:${INPUT_TAG}"
+      - name: 🐳 Resolve training image
+        id: training
+        uses: OpenCloudHub/.github/.github/actions/resolve-docker-tag@main
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          token: ${{ secrets.DOCKER_TOKEN }}
+          repo: ${{ secrets.DOCKER_USERNAME }}/${{ inputs.model_name }}-training
+          prefix: main
+          tag: ${{ inputs.training_image_tag }}
 
-          # Get Docker Hub token
-          TOKEN=$(curl -s "https://auth.docker.io/token?service=registry.docker.io&scope=repository:${DOCKER_REPO}:pull" \
-            | jq -r '.token')
+      - name: 🐳 Resolve serving image
+        id: serving
+        uses: OpenCloudHub/.github/.github/actions/resolve-docker-tag@main
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          token: ${{ secrets.DOCKER_TOKEN }}
+          repo: ${{ secrets.DOCKER_USERNAME }}/${{ inputs.model_name }}-serving
+          prefix: main
+          tag: ${{ inputs.serving_image_tag }}
 
-          if [ "$INPUT_TAG" = "latest" ]; then
-            echo "🔍 Finding latest main-* image..."
-
-            # Get digest of 'latest' tag
-            LATEST_DIGEST=$(curl -s \
-              -H "Authorization: Bearer ${TOKEN}" \
-              -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
-              "https://registry-1.docker.io/v2/${DOCKER_REPO}/manifests/latest" \
-              | jq -r '.config.digest')
-
-            if [ "$LATEST_DIGEST" = "null" ] || [ -z "$LATEST_DIGEST" ]; then
-              echo "❌ Could not find 'latest' tag for training image"
-              exit 1
-            fi
-
-            echo "📦 Latest digest: ${LATEST_DIGEST}"
-
-            # Get all main-* tags
-            ALL_TAGS=$(curl -s \
-              -H "Authorization: Bearer ${TOKEN}" \
-              "https://registry-1.docker.io/v2/${DOCKER_REPO}/tags/list" \
-              | jq -r '.tags[]' | grep "^main-" || echo "")
-
-            if [ -z "$ALL_TAGS" ]; then
-              echo "❌ No main-* tags found for training image"
-              exit 1
-            fi
-
-            # Find matching tag
-            RESOLVED_TAG=""
-            for tag in $ALL_TAGS; do
-              TAG_DIGEST=$(curl -s \
-                -H "Authorization: Bearer ${TOKEN}" \
-                -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
-                "https://registry-1.docker.io/v2/${DOCKER_REPO}/manifests/${tag}" \
-                | jq -r '.config.digest')
-
-              if [ "$TAG_DIGEST" = "$LATEST_DIGEST" ]; then
-                RESOLVED_TAG="$tag"
-                echo "✅ Found matching training tag: ${RESOLVED_TAG}"
-                break
-              fi
-            done
-
-            if [ -z "$RESOLVED_TAG" ]; then
-              echo "❌ Could not find main-* tag matching latest digest"
-              exit 1
-            fi
-          else
-            RESOLVED_TAG="$INPUT_TAG"
-            echo "✅ Using explicit training tag: ${RESOLVED_TAG}"
-
-            # Validate tag exists
-            IMAGE_EXISTS=$(curl -s -o /dev/null -w "%{http_code}" \
-              -H "Authorization: Bearer ${TOKEN}" \
-              "https://registry-1.docker.io/v2/${DOCKER_REPO}/manifests/${RESOLVED_TAG}")
-
-            if [ "$IMAGE_EXISTS" != "200" ]; then
-              echo "❌ Training image not found: ${DOCKER_REPO}:${RESOLVED_TAG}"
-              exit 1
-            fi
-          fi
-
-          FULL_IMAGE="${DOCKER_REPO}:${RESOLVED_TAG}"
-          echo "✅ Training image: ${FULL_IMAGE}"
-          echo "resolved_tag=${RESOLVED_TAG}" >> $GITHUB_OUTPUT
-          echo "full_image=${FULL_IMAGE}" >> $GITHUB_OUTPUT
-
-      - name: Resolve serving image
-        id: resolve_serving
-        run: |
-          INPUT_TAG="${{ inputs.serving_image_tag }}"
-          DOCKER_REPO="${{ secrets.DOCKER_USERNAME }}/${{ inputs.model_name }}-serving"
-
-          echo "🔍 Resolving serving image: ${DOCKER_REPO}:${INPUT_TAG}"
-
-          # Get Docker Hub token
-          TOKEN=$(curl -s "https://auth.docker.io/token?service=registry.docker.io&scope=repository:${DOCKER_REPO}:pull" \
-            | jq -r '.token')
-
-          if [ "$INPUT_TAG" = "latest" ]; then
-            echo "🔍 Finding latest main-* image..."
-
-            # Get digest of 'latest' tag
-            LATEST_DIGEST=$(curl -s \
-              -H "Authorization: Bearer ${TOKEN}" \
-              -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
-              "https://registry-1.docker.io/v2/${DOCKER_REPO}/manifests/latest" \
-              | jq -r '.config.digest')
-
-            if [ "$LATEST_DIGEST" = "null" ] || [ -z "$LATEST_DIGEST" ]; then
-              echo "❌ Could not find 'latest' tag for serving image"
-              exit 1
-            fi
-
-            echo "📦 Latest digest: ${LATEST_DIGEST}"
-
-            # Get all main-* tags
-            ALL_TAGS=$(curl -s \
-              -H "Authorization: Bearer ${TOKEN}" \
-              "https://registry-1.docker.io/v2/${DOCKER_REPO}/tags/list" \
-              | jq -r '.tags[]' | grep "^main-" || echo "")
-
-            if [ -z "$ALL_TAGS" ]; then
-              echo "❌ No main-* tags found for serving image"
-              exit 1
-            fi
-
-            # Find matching tag
-            RESOLVED_TAG=""
-            for tag in $ALL_TAGS; do
-              TAG_DIGEST=$(curl -s \
-                -H "Authorization: Bearer ${TOKEN}" \
-                -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
-                "https://registry-1.docker.io/v2/${DOCKER_REPO}/manifests/${tag}" \
-                | jq -r '.config.digest')
-
-              if [ "$TAG_DIGEST" = "$LATEST_DIGEST" ]; then
-                RESOLVED_TAG="$tag"
-                echo "✅ Found matching serving tag: ${RESOLVED_TAG}"
-                break
-              fi
-            done
-
-            if [ -z "$RESOLVED_TAG" ]; then
-              echo "❌ Could not find main-* tag matching latest digest"
-              exit 1
-            fi
-          else
-            RESOLVED_TAG="$INPUT_TAG"
-            echo "✅ Using explicit serving tag: ${RESOLVED_TAG}"
-
-            # Validate tag exists
-            IMAGE_EXISTS=$(curl -s -o /dev/null -w "%{http_code}" \
-              -H "Authorization: Bearer ${TOKEN}" \
-              "https://registry-1.docker.io/v2/${DOCKER_REPO}/manifests/${RESOLVED_TAG}")
-
-            if [ "$IMAGE_EXISTS" != "200" ]; then
-              echo "❌ Serving image not found: ${DOCKER_REPO}:${RESOLVED_TAG}"
-              exit 1
-            fi
-          fi
-
-          FULL_IMAGE="${DOCKER_REPO}:${RESOLVED_TAG}"
-          echo "✅ Serving image: ${FULL_IMAGE}"
-          echo "resolved_tag=${RESOLVED_TAG}" >> $GITHUB_OUTPUT
-          echo "full_image=${FULL_IMAGE}" >> $GITHUB_OUTPUT
-
-      - name: Submit Argo Workflow
+      # =========================================================================
+      # Submit workflow
+      # =========================================================================
+      - name: 🚀 Submit Argo Workflow
         id: submit
         run: |
-          WORKFLOW_NAME=${{ inputs.model_name }}-$(date +%s)
-
-          cat <<EOF | ~/.local/bin/kubectl create -n mlops -f -
+          cat <<EOF | kubectl create -n mlops -f -
           apiVersion: argoproj.io/v1alpha1
           kind: Workflow
           metadata:
@@ -253,7 +134,7 @@ jobs:
               - name: experiment_name
                 value: "${{ inputs.experiment_name }}"
               - name: dvc_data_version
-                value: "${{ inputs.dvc_data_version }}"
+                value: "${{ steps.data.outputs.full-tag }}"
               - name: compute_type
                 value: "${{ inputs.compute_type }}"
               - name: approval_mode
@@ -265,9 +146,9 @@ jobs:
               - name: comparison_threshold
                 value: "${{ inputs.comparison_threshold }}"
               - name: training_image
-                value: "${{ steps.resolve_training.outputs.full_image }}"
+                value: "${{ steps.training.outputs.full-image }}"
               - name: serving_image
-                value: "${{ steps.resolve_serving.outputs.full_image }}"
+                value: "${{ steps.serving.outputs.full-image }}"
               - name: training_entrypoint
                 value: "${{ inputs.training_entrypoint }}"
               - name: training_args
@@ -276,38 +157,30 @@ jobs:
 
           # Get the actual workflow name
           sleep 2
-          ACTUAL_NAME=$(~/.local/bin/kubectl get workflows -n mlops -l repo=${{ github.event.repository.name }},run-id=${{ github.run_id }} -o jsonpath='{.items[0].metadata.name}')
+          ACTUAL_NAME=$(kubectl get workflows -n mlops -l repo=${{ github.event.repository.name }},run-id=${{ github.run_id }} -o jsonpath='{.items[0].metadata.name}')
           echo "workflow_name=${ACTUAL_NAME}" >> $GITHUB_OUTPUT
 
-      - name: 📊 Provide Monitoring Links
+      # =========================================================================
+      # Summary
+      # =========================================================================
+      - name: 📊 Summary
         run: |
           WORKFLOW_NAME=${{ steps.submit.outputs.workflow_name }}
 
-          echo "========================================="
-          echo "🚀 WORKFLOW SUBMITTED: ${WORKFLOW_NAME}"
-          echo "🎯 Model: ${{ inputs.model_name }}"
-          echo "🧪 Experiment: ${{ inputs.experiment_name }}"
-          echo ""
-          echo "🐳 IMAGES:"
-          echo "  Training: ${{ steps.resolve_training.outputs.full_image }}"
-          echo "  Serving:  ${{ steps.resolve_serving.outputs.full_image }}"
-          echo ""
-          echo "📊 Data Version: ${{ inputs.dvc_data_version }}"
-          echo "💻 Compute: ${{ inputs.compute_type }}"
-          echo "🔧 Approval: ${{ inputs.approval_mode }}"
-          echo "📈 Comparison Metric: ${{ inputs.comparison_metric }}"
-          echo "📊 Threshold: ${{ inputs.comparison_threshold }} (${{ inputs.comparison_higher_is_better && 'higher' || 'lower' }} is better)"
-          echo "🚀 Entrypoint: ${{ inputs.training_entrypoint }}"
-          echo "⚙️  Args: ${{ inputs.training_args }}"
-          echo "========================================="
-          echo ""
-          echo "📊 MONITORING:"
-          echo ""
-          echo "🌐 Argo Workflow:"
-          echo "   https://argo.internal.opencloudhub.org/workflows/ai/${WORKFLOW_NAME}"
-          echo ""
-          echo "🔬 MLflow UI:"
-          echo "   https://mlflow.internal.opencloudhub.org"
-          echo "   → Navigate to experiment: ${{ inputs.experiment_name }}"
-          echo ""
-          echo "========================================="
+          echo "## 🚀 ML Workflow Submitted" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Parameter | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| **Workflow** | \`${WORKFLOW_NAME}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Model** | \`${{ inputs.model_name }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Experiment** | \`${{ inputs.experiment_name }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Data Version** | \`${{ steps.data.outputs.full-tag }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Training Image** | \`${{ steps.training.outputs.full-image }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Serving Image** | \`${{ steps.serving.outputs.full-image }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Compute** | \`${{ inputs.compute_type }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Approval** | \`${{ inputs.approval_mode }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📊 Monitoring" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- [Argo Workflow](https://argo-workflows.internal.opencloudhub.org/workflows/mlops/${WORKFLOW_NAME})" >> $GITHUB_STEP_SUMMARY
+          echo "- [MLflow Experiment](https://mlflow.internal.opencloudhub.org/#/experiments)" >> $GITHUB_STEP_SUMMARY
