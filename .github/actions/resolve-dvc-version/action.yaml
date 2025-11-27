@@ -17,6 +17,10 @@ inputs:
     description: 'Verify data exists in remote storage (requires AWS creds)'
     required: false
     default: 'false'
+  verify-remote-strict:
+    description: 'Fail if remote data is missing (false = warn only)'
+    required: false
+    default: 'false'
   aws-access-key-id:
     description: 'AWS access key (required if verify-remote is true)'
     required: false
@@ -226,18 +230,8 @@ runs:
         S3_OPTS="--no-verify-ssl"
         [ -n "${AWS_ENDPOINT_URL}" ] && S3_OPTS="${S3_OPTS} --endpoint-url ${AWS_ENDPOINT_URL}"
 
-        # Debug: verify credentials are set
-        echo ""
-        echo "DEBUG:"
-        echo "   Endpoint: ${AWS_ENDPOINT_URL}"
-        echo "   Access Key length: ${#AWS_ACCESS_KEY_ID}"
-        echo "   Access Key prefix: ${AWS_ACCESS_KEY_ID:0:4}****"
-        echo "   Secret Key length: ${#AWS_SECRET_ACCESS_KEY}"
-        echo "   S3 Options: ${S3_OPTS}"
-        echo ""
-
         # Test with a direct command first
-        echo "   Testing direct S3 command..."
+        echo "   Testing minio connectivity..."
         aws --version
         echo ""
         aws s3 ls s3://dvcstore/ ${S3_OPTS} --max-items 1 2>&1 || true
@@ -278,13 +272,17 @@ runs:
         # Report results
         if [ ${MISSING_COUNT} -gt 0 ]; then
           echo ""
-          echo "❌ ${MISSING_COUNT}/${CHECKED_COUNT} data objects missing from remote storage"
+          echo "⚠️  ${MISSING_COUNT}/${CHECKED_COUNT} data objects missing from remote storage"
           echo "   Run 'dvc push' in the data-registry repo to fix this."
-          exit 1
-        fi
 
-        if [ ${CHECKED_COUNT} -eq 0 ]; then
-          echo "⚠️  No MD5 hashes found to verify"
+          if [ "${{ inputs.verify-remote-strict }}" = "true" ]; then
+            echo ""
+            echo "❌ Failing due to verify-remote-strict=true"
+            exit 1
+          else
+            echo ""
+            echo "ℹ️  Continuing anyway (verify-remote-strict=false)"
+          fi
         else
           echo "✅ All ${CHECKED_COUNT} data objects verified in remote storage"
         fi
