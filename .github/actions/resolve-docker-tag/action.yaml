@@ -1,0 +1,207 @@
+# .github/actions/resolve-docker-tag/action.yaml
+name: 'Resolve Docker Tag'
+description: 'Resolve Docker image tags - validates explicit tags or finds latest for a prefix'
+
+inputs:
+  username:
+    description: 'Docker registry username (required for private repos)'
+    required: false
+    default: ''
+  token:
+    description: 'Docker registry token/password (required for private repos)'
+    required: false
+    default: ''
+  repo:
+    description: 'Docker repository (e.g., opencloudhuborg/wine-classifier-training)'
+    required: true
+  prefix:
+    description: 'Tag prefix (e.g., main, pr)'
+    required: true
+  tag:
+    description: 'Tag to resolve - "latest" to find most recent, or specific suffix (e.g., abc123)'
+    required: true
+    default: 'latest'
+  registry:
+    description: 'Container registry (docker.io, ghcr.io)'
+    required: false
+    default: 'docker.io'
+
+outputs:
+  resolved-tag:
+    description: 'Resolved tag (e.g., main-abc123)'
+    value: ${{ steps.resolve.outputs.resolved-tag }}
+  full-image:
+    description: 'Full image reference (e.g., opencloudhuborg/wine-classifier:main-abc123)'
+    value: ${{ steps.resolve.outputs.full-image }}
+  digest:
+    description: 'Image digest'
+    value: ${{ steps.resolve.outputs.digest }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: 🔍 Resolve Docker tag
+      id: resolve
+      shell: bash
+      env:
+        INPUT_USERNAME: ${{ inputs.username }}
+        INPUT_TOKEN: ${{ inputs.token }}
+      run: |
+        REPO="${{ inputs.repo }}"
+        PREFIX="${{ inputs.prefix }}"
+        TAG="${{ inputs.tag }}"
+        REGISTRY="${{ inputs.registry }}"
+
+        echo "🔍 Resolving image tag..."
+        echo "   Repository: ${REPO}"
+        echo "   Prefix: ${PREFIX}"
+        echo "   Tag: ${TAG}"
+        echo "   Registry: ${REGISTRY}"
+        echo "   Auth: ${INPUT_USERNAME:+provided}${INPUT_USERNAME:-anonymous}"
+        echo ""
+
+        # Get registry token
+        if [ "${REGISTRY}" = "docker.io" ]; then
+          REGISTRY_URL="https://registry-1.docker.io/v2"
+
+          if [ -n "${INPUT_USERNAME}" ] && [ -n "${INPUT_TOKEN}" ]; then
+            # Authenticated request for private repos
+            echo "🔐 Using authenticated access..."
+            TOKEN=$(curl -s \
+              -u "${INPUT_USERNAME}:${INPUT_TOKEN}" \
+              "https://auth.docker.io/token?service=registry.docker.io&scope=repository:${REPO}:pull" \
+              | jq -r '.token')
+          else
+            # Anonymous access for public repos
+            TOKEN=$(curl -s \
+              "https://auth.docker.io/token?service=registry.docker.io&scope=repository:${REPO}:pull" \
+              | jq -r '.token')
+          fi
+
+          if [ -z "$TOKEN" ] || [ "$TOKEN" = "null" ]; then
+            echo "❌ Failed to obtain registry token"
+            echo "   If this is a private repository, make sure username and token are provided."
+            exit 1
+          fi
+        elif [ "${REGISTRY}" = "ghcr.io" ]; then
+          echo "❌ ghcr.io not yet supported"
+          exit 1
+        else
+          echo "❌ Unsupported registry: ${REGISTRY}"
+          exit 1
+        fi
+
+        # Function to get manifest digest
+        get_digest() {
+          local tag=$1
+          curl -s \
+            -H "Authorization: Bearer ${TOKEN}" \
+            -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
+            "${REGISTRY_URL}/${REPO}/manifests/${tag}" \
+            | jq -r '.config.digest // empty'
+        }
+
+        # Function to check if tag exists
+        tag_exists() {
+          local tag=$1
+          local status=$(curl -s -o /dev/null -w "%{http_code}" \
+            -H "Authorization: Bearer ${TOKEN}" \
+            -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
+            "${REGISTRY_URL}/${REPO}/manifests/${tag}")
+          [ "$status" = "200" ]
+        }
+
+        # Check if repository exists at all
+        REPO_CHECK=$(curl -s -o /dev/null -w "%{http_code}" \
+          -H "Authorization: Bearer ${TOKEN}" \
+          "${REGISTRY_URL}/${REPO}/tags/list")
+
+        if [ "$REPO_CHECK" = "404" ]; then
+          echo "❌ Repository not found: ${REPO}"
+          echo "   Make sure the repository exists and is accessible."
+          exit 1
+        elif [ "$REPO_CHECK" != "200" ]; then
+          echo "❌ Failed to access repository: ${REPO} (HTTP ${REPO_CHECK})"
+          exit 1
+        fi
+
+        if [ "${TAG}" = "latest" ]; then
+          # Find the prefixed tag that matches 'latest' digest
+          echo "🔍 Finding ${PREFIX}-* tag matching 'latest'..."
+
+          LATEST_DIGEST=$(get_digest "latest")
+
+          if [ -z "$LATEST_DIGEST" ]; then
+            echo "❌ Could not find 'latest' tag for ${REPO}"
+            echo "   Make sure an image is tagged as 'latest'."
+            exit 1
+          fi
+
+          echo "📦 Latest digest: ${LATEST_DIGEST}"
+
+          # Get all tags with the specified prefix
+          ALL_TAGS=$(curl -s \
+            -H "Authorization: Bearer ${TOKEN}" \
+            "${REGISTRY_URL}/${REPO}/tags/list" \
+            | jq -r '.tags[]?' 2>/dev/null | grep "^${PREFIX}-" | sort -r || echo "")
+
+          if [ -z "$ALL_TAGS" ]; then
+            echo "❌ No ${PREFIX}-* tags found for ${REPO}"
+            echo "   Available tags:"
+            curl -s \
+              -H "Authorization: Bearer ${TOKEN}" \
+              "${REGISTRY_URL}/${REPO}/tags/list" \
+              | jq -r '.tags[]?' 2>/dev/null | head -20 || echo "   (none)"
+            exit 1
+          fi
+
+          # Find matching tag
+          RESOLVED_TAG=""
+          for candidate in $ALL_TAGS; do
+            CANDIDATE_DIGEST=$(get_digest "$candidate")
+            if [ "$CANDIDATE_DIGEST" = "$LATEST_DIGEST" ]; then
+              RESOLVED_TAG="$candidate"
+              echo "✅ Found matching tag: ${RESOLVED_TAG}"
+              break
+            fi
+          done
+
+          if [ -z "$RESOLVED_TAG" ]; then
+            echo "❌ Could not find ${PREFIX}-* tag matching 'latest' digest"
+            echo "   This can happen if 'latest' was built separately from ${PREFIX}-* tags."
+            echo "   Available ${PREFIX}-* tags:"
+            echo "$ALL_TAGS" | head -10
+            exit 1
+          fi
+
+          DIGEST="$LATEST_DIGEST"
+
+        else
+          # Explicit tag - validate it exists
+          RESOLVED_TAG="${PREFIX}-${TAG}"
+          echo "🔍 Validating explicit tag: ${RESOLVED_TAG}"
+
+          if ! tag_exists "$RESOLVED_TAG"; then
+            echo "❌ Tag not found: ${REPO}:${RESOLVED_TAG}"
+            echo ""
+            echo "   Available ${PREFIX}-* tags:"
+            curl -s \
+              -H "Authorization: Bearer ${TOKEN}" \
+              "${REGISTRY_URL}/${REPO}/tags/list" \
+              | jq -r '.tags[]?' 2>/dev/null | grep "^${PREFIX}-" | sort -r | head -10 || echo "   (none)"
+            exit 1
+          fi
+
+          DIGEST=$(get_digest "$RESOLVED_TAG")
+          echo "✅ Tag exists: ${RESOLVED_TAG}"
+        fi
+
+        FULL_IMAGE="${REPO}:${RESOLVED_TAG}"
+
+        echo ""
+        echo "✅ Resolved image: ${FULL_IMAGE}"
+        echo "   Digest: ${DIGEST}"
+
+        echo "resolved-tag=${RESOLVED_TAG}" >> $GITHUB_OUTPUT
+        echo "full-image=${FULL_IMAGE}" >> $GITHUB_OUTPUT
+        echo "digest=${DIGEST}" >> $GITHUB_OUTPUT

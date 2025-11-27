@@ -58,66 +58,56 @@ on:
         required: false
         type: string
         default: '0.05'
-      
+
 jobs:
   submit-workflow:
     name: 🚀 Submit ML Lifecycle Workflow
     runs-on: self-hosted-local
     steps:
-      - name: Install kubectl
-        run: |
-          curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-          chmod +x kubectl
-          mkdir -p ~/.local/bin
-          mv kubectl ~/.local/bin/
-          echo "$HOME/.local/bin" >> $GITHUB_PATH
-
-      - name: Configure kubectl
-        run: |
-          mkdir -p ~/.kube
-          echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > ~/.kube/config
-          ~/.local/bin/kubectl cluster-info
+      - uses: OpenCloudHub/.github/actions/setup-kubectl@main
+        with:
+          kube-config: ${{ secrets.KUBE_CONFIG }}
 
       - name: Resolve training image
         id: resolve_training
         run: |
           INPUT_TAG="${{ inputs.training_image_tag }}"
           DOCKER_REPO="${{ secrets.DOCKER_USERNAME }}/${{ inputs.model_name }}-training"
-          
+
           echo "🔍 Resolving training image: ${DOCKER_REPO}:${INPUT_TAG}"
-          
+
           # Get Docker Hub token
           TOKEN=$(curl -s "https://auth.docker.io/token?service=registry.docker.io&scope=repository:${DOCKER_REPO}:pull" \
             | jq -r '.token')
-          
+
           if [ "$INPUT_TAG" = "latest" ]; then
             echo "🔍 Finding latest main-* image..."
-            
+
             # Get digest of 'latest' tag
             LATEST_DIGEST=$(curl -s \
               -H "Authorization: Bearer ${TOKEN}" \
               -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
               "https://registry-1.docker.io/v2/${DOCKER_REPO}/manifests/latest" \
               | jq -r '.config.digest')
-            
+
             if [ "$LATEST_DIGEST" = "null" ] || [ -z "$LATEST_DIGEST" ]; then
               echo "❌ Could not find 'latest' tag for training image"
               exit 1
             fi
-            
+
             echo "📦 Latest digest: ${LATEST_DIGEST}"
-            
+
             # Get all main-* tags
             ALL_TAGS=$(curl -s \
               -H "Authorization: Bearer ${TOKEN}" \
               "https://registry-1.docker.io/v2/${DOCKER_REPO}/tags/list" \
               | jq -r '.tags[]' | grep "^main-" || echo "")
-            
+
             if [ -z "$ALL_TAGS" ]; then
               echo "❌ No main-* tags found for training image"
               exit 1
             fi
-            
+
             # Find matching tag
             RESOLVED_TAG=""
             for tag in $ALL_TAGS; do
@@ -126,14 +116,14 @@ jobs:
                 -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
                 "https://registry-1.docker.io/v2/${DOCKER_REPO}/manifests/${tag}" \
                 | jq -r '.config.digest')
-              
+
               if [ "$TAG_DIGEST" = "$LATEST_DIGEST" ]; then
                 RESOLVED_TAG="$tag"
                 echo "✅ Found matching training tag: ${RESOLVED_TAG}"
                 break
               fi
             done
-            
+
             if [ -z "$RESOLVED_TAG" ]; then
               echo "❌ Could not find main-* tag matching latest digest"
               exit 1
@@ -141,18 +131,18 @@ jobs:
           else
             RESOLVED_TAG="$INPUT_TAG"
             echo "✅ Using explicit training tag: ${RESOLVED_TAG}"
-            
+
             # Validate tag exists
             IMAGE_EXISTS=$(curl -s -o /dev/null -w "%{http_code}" \
               -H "Authorization: Bearer ${TOKEN}" \
               "https://registry-1.docker.io/v2/${DOCKER_REPO}/manifests/${RESOLVED_TAG}")
-            
+
             if [ "$IMAGE_EXISTS" != "200" ]; then
               echo "❌ Training image not found: ${DOCKER_REPO}:${RESOLVED_TAG}"
               exit 1
             fi
           fi
-          
+
           FULL_IMAGE="${DOCKER_REPO}:${RESOLVED_TAG}"
           echo "✅ Training image: ${FULL_IMAGE}"
           echo "resolved_tag=${RESOLVED_TAG}" >> $GITHUB_OUTPUT
@@ -163,41 +153,41 @@ jobs:
         run: |
           INPUT_TAG="${{ inputs.serving_image_tag }}"
           DOCKER_REPO="${{ secrets.DOCKER_USERNAME }}/${{ inputs.model_name }}-serving"
-          
+
           echo "🔍 Resolving serving image: ${DOCKER_REPO}:${INPUT_TAG}"
-          
+
           # Get Docker Hub token
           TOKEN=$(curl -s "https://auth.docker.io/token?service=registry.docker.io&scope=repository:${DOCKER_REPO}:pull" \
             | jq -r '.token')
-          
+
           if [ "$INPUT_TAG" = "latest" ]; then
             echo "🔍 Finding latest main-* image..."
-            
+
             # Get digest of 'latest' tag
             LATEST_DIGEST=$(curl -s \
               -H "Authorization: Bearer ${TOKEN}" \
               -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
               "https://registry-1.docker.io/v2/${DOCKER_REPO}/manifests/latest" \
               | jq -r '.config.digest')
-            
+
             if [ "$LATEST_DIGEST" = "null" ] || [ -z "$LATEST_DIGEST" ]; then
               echo "❌ Could not find 'latest' tag for serving image"
               exit 1
             fi
-            
+
             echo "📦 Latest digest: ${LATEST_DIGEST}"
-            
+
             # Get all main-* tags
             ALL_TAGS=$(curl -s \
               -H "Authorization: Bearer ${TOKEN}" \
               "https://registry-1.docker.io/v2/${DOCKER_REPO}/tags/list" \
               | jq -r '.tags[]' | grep "^main-" || echo "")
-            
+
             if [ -z "$ALL_TAGS" ]; then
               echo "❌ No main-* tags found for serving image"
               exit 1
             fi
-            
+
             # Find matching tag
             RESOLVED_TAG=""
             for tag in $ALL_TAGS; do
@@ -206,14 +196,14 @@ jobs:
                 -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
                 "https://registry-1.docker.io/v2/${DOCKER_REPO}/manifests/${tag}" \
                 | jq -r '.config.digest')
-              
+
               if [ "$TAG_DIGEST" = "$LATEST_DIGEST" ]; then
                 RESOLVED_TAG="$tag"
                 echo "✅ Found matching serving tag: ${RESOLVED_TAG}"
                 break
               fi
             done
-            
+
             if [ -z "$RESOLVED_TAG" ]; then
               echo "❌ Could not find main-* tag matching latest digest"
               exit 1
@@ -221,18 +211,18 @@ jobs:
           else
             RESOLVED_TAG="$INPUT_TAG"
             echo "✅ Using explicit serving tag: ${RESOLVED_TAG}"
-            
+
             # Validate tag exists
             IMAGE_EXISTS=$(curl -s -o /dev/null -w "%{http_code}" \
               -H "Authorization: Bearer ${TOKEN}" \
               "https://registry-1.docker.io/v2/${DOCKER_REPO}/manifests/${RESOLVED_TAG}")
-            
+
             if [ "$IMAGE_EXISTS" != "200" ]; then
               echo "❌ Serving image not found: ${DOCKER_REPO}:${RESOLVED_TAG}"
               exit 1
             fi
           fi
-          
+
           FULL_IMAGE="${DOCKER_REPO}:${RESOLVED_TAG}"
           echo "✅ Serving image: ${FULL_IMAGE}"
           echo "resolved_tag=${RESOLVED_TAG}" >> $GITHUB_OUTPUT
@@ -292,7 +282,7 @@ jobs:
       - name: 📊 Provide Monitoring Links
         run: |
           WORKFLOW_NAME=${{ steps.submit.outputs.workflow_name }}
-          
+
           echo "========================================="
           echo "🚀 WORKFLOW SUBMITTED: ${WORKFLOW_NAME}"
           echo "🎯 Model: ${{ inputs.model_name }}"

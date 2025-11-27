@@ -1,0 +1,250 @@
+# .github/actions/resolve-dvc-version/action.yaml
+name: 'Resolve DVC Data Version'
+description: 'Resolve DVC data version - validates tags and optionally verifies data exists in remote'
+
+inputs:
+  dataset:
+    description: 'Dataset name (e.g., opencloudhub-readmes, emotion, wine-quality)'
+    required: true
+  version:
+    description: 'Version to resolve - "latest" for most recent, or specific (e.g., v1.0.0)'
+    required: true
+    default: 'latest'
+  dvc-repo:
+    description: 'DVC repository URL'
+    required: true
+  verify-remote:
+    description: 'Verify data exists in remote storage (requires AWS creds)'
+    required: false
+    default: 'false'
+  aws-access-key-id:
+    description: 'AWS access key (required if verify-remote is true)'
+    required: false
+    default: ''
+  aws-secret-access-key:
+    description: 'AWS secret key (required if verify-remote is true)'
+    required: false
+    default: ''
+  aws-endpoint-url:
+    description: 'S3 endpoint URL (for MinIO)'
+    required: false
+    default: ''
+
+outputs:
+  resolved-version:
+    description: 'Resolved version (e.g., v1.0.0)'
+    value: ${{ steps.resolve.outputs.resolved-version }}
+  full-tag:
+    description: 'Full git tag (e.g., opencloudhub-readmes-v1.0.0)'
+    value: ${{ steps.resolve.outputs.full-tag }}
+  dataset:
+    description: 'Dataset name (pass-through for convenience)'
+    value: ${{ steps.resolve.outputs.dataset }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: 🔍 Resolve DVC version
+      id: resolve
+      shell: bash
+      env:
+        AWS_ACCESS_KEY_ID: ${{ inputs.aws-access-key-id }}
+        AWS_SECRET_ACCESS_KEY: ${{ inputs.aws-secret-access-key }}
+        AWS_ENDPOINT_URL: ${{ inputs.aws-endpoint-url }}
+      run: |
+        DATASET="${{ inputs.dataset }}"
+        VERSION="${{ inputs.version }}"
+        DVC_REPO="${{ inputs.dvc-repo }}"
+        VERIFY_REMOTE="${{ inputs.verify-remote }}"
+
+        echo "🔍 Resolving DVC data version..."
+        echo "   Dataset: ${DATASET}"
+        echo "   Version: ${VERSION}"
+        echo "   Repository: ${DVC_REPO}"
+        echo "   Verify remote: ${VERIFY_REMOTE}"
+        echo ""
+
+        # Get all tags for this dataset
+        echo "📋 Fetching tags from repository..."
+        ALL_TAGS=$(git ls-remote --tags "${DVC_REPO}" 2>/dev/null \
+          | grep "refs/tags/${DATASET}-v" \
+          | sed 's/.*refs\/tags\///' \
+          | grep -v '\^{}' \
+          | sort -V)
+
+        if [ -z "$ALL_TAGS" ]; then
+          echo "❌ No tags found for dataset '${DATASET}'"
+          echo "   Expected tag pattern: ${DATASET}-v*"
+          echo ""
+          echo "   Available tags in repo:"
+          git ls-remote --tags "${DVC_REPO}" 2>/dev/null \
+            | sed 's/.*refs\/tags\///' \
+            | grep -v '\^{}' \
+            | head -20 || echo "   (none or repo not accessible)"
+          exit 1
+        fi
+
+        echo "   Found $(echo "$ALL_TAGS" | wc -l) tags for ${DATASET}"
+
+        if [ "${VERSION}" = "latest" ]; then
+          # Get the latest (highest semver) tag
+          FULL_TAG=$(echo "$ALL_TAGS" | tail -1)
+          RESOLVED_VERSION=$(echo "$FULL_TAG" | sed "s/${DATASET}-//")
+          echo "✅ Latest version: ${RESOLVED_VERSION}"
+        else
+          # Validate specific version exists
+          FULL_TAG="${DATASET}-${VERSION}"
+
+          if ! echo "$ALL_TAGS" | grep -q "^${FULL_TAG}$"; then
+            echo "❌ Tag not found: ${FULL_TAG}"
+            echo ""
+            echo "   Available versions for ${DATASET}:"
+            echo "$ALL_TAGS" | tail -10 | sed "s/${DATASET}-/   /"
+            exit 1
+          fi
+
+          RESOLVED_VERSION="${VERSION}"
+          echo "✅ Tag exists: ${FULL_TAG}"
+        fi
+
+        # Verify DVC tracking exists at this tag (either .dvc files or dvc.lock)
+        echo ""
+        echo "📂 Checking for DVC tracking..."
+
+        # Clone sparse checkout to check for DVC tracking
+        TEMP_DIR=$(mktemp -d)
+        trap "rm -rf ${TEMP_DIR}" EXIT
+
+        cd "${TEMP_DIR}"
+        git init -q
+        git remote add origin "${DVC_REPO}"
+        git config core.sparseCheckout true
+
+        # Check both data/ and pipelines/ directories
+        cat > .git/info/sparse-checkout << SPARSE
+        data/${DATASET}/
+        pipelines/${DATASET}*/
+        SPARSE
+
+        if ! git fetch -q --depth 1 origin "refs/tags/${FULL_TAG}" 2>/dev/null; then
+          echo "❌ Failed to fetch tag ${FULL_TAG}"
+          exit 1
+        fi
+
+        git checkout -q FETCH_HEAD 2>/dev/null
+
+        # Check for .dvc files in data folder (manual dvc add)
+        DVC_FILES=$(find "data/${DATASET}" -name "*.dvc" 2>/dev/null || true)
+        DVC_FILE_COUNT=$(echo "$DVC_FILES" | grep -c "\.dvc$" || echo "0")
+
+        # Check for dvc.lock files in pipelines folder (pipeline outputs)
+        LOCK_FILES=$(find "pipelines" -path "*${DATASET}*" -name "dvc.lock" 2>/dev/null || true)
+        LOCK_FILE_COUNT=$(echo "$LOCK_FILES" | grep -c "dvc.lock$" || echo "0")
+
+        if [ "$DVC_FILE_COUNT" -eq 0 ] && [ "$LOCK_FILE_COUNT" -eq 0 ]; then
+          echo "❌ No DVC tracking found for dataset '${DATASET}' at tag ${FULL_TAG}"
+          echo "   Checked for:"
+          echo "   - .dvc files in data/${DATASET}/"
+          echo "   - dvc.lock files in pipelines/${DATASET}*/"
+          echo ""
+          echo "   This tag may not have any tracked data."
+          exit 1
+        fi
+
+        echo "✅ Found DVC tracking:"
+        if [ "$DVC_FILE_COUNT" -gt 0 ]; then
+          echo "   - ${DVC_FILE_COUNT} .dvc file(s) in data/${DATASET}/"
+        fi
+        if [ "$LOCK_FILE_COUNT" -gt 0 ]; then
+          echo "   - ${LOCK_FILE_COUNT} dvc.lock file(s) in pipelines/"
+          echo "$LOCK_FILES" | while read -r lock; do
+            [ -n "$lock" ] && echo "     - ${lock}"
+          done
+        fi
+
+        # Optional: Verify data exists in remote storage
+        if [ "${VERIFY_REMOTE}" = "true" ]; then
+          echo ""
+          echo "🔍 Verifying data exists in remote storage..."
+
+          if [ -z "${AWS_ACCESS_KEY_ID}" ] || [ -z "${AWS_SECRET_ACCESS_KEY}" ]; then
+            echo "❌ AWS credentials required for remote verification"
+            echo "   Provide aws-access-key-id and aws-secret-access-key inputs"
+            exit 1
+          fi
+
+          # Extract MD5 hashes from .dvc files and dvc.lock files
+          MISSING_COUNT=0
+          CHECKED_COUNT=0
+
+          S3_OPTS=""
+          if [ -n "${AWS_ENDPOINT_URL}" ]; then
+            S3_OPTS="--endpoint-url ${AWS_ENDPOINT_URL}"
+          fi
+
+          # Function to check if an MD5 object exists in S3
+          check_md5() {
+            local md5=$1
+            local source=$2
+
+            if [ -n "$md5" ] && [ "$md5" != "null" ]; then
+              PREFIX="${md5:0:2}"
+              SUFFIX="${md5:2}"
+              OBJECT_PATH="${PREFIX}/${SUFFIX}"
+
+              if ! aws s3api head-object ${S3_OPTS} --bucket dvcstore --key "files/md5/${OBJECT_PATH}" >/dev/null 2>&1; then
+                echo "   ⚠️  Missing: ${OBJECT_PATH} (from ${source})"
+                return 1
+              fi
+              return 0
+            fi
+            return 0
+          }
+
+          # Check .dvc files
+          for dvc_file in $(find "data/${DATASET}" -name "*.dvc" 2>/dev/null); do
+            MD5=$(grep -E "^md5:" "$dvc_file" 2>/dev/null | awk '{print $2}' | head -1)
+            if ! check_md5 "$MD5" "$dvc_file"; then
+              MISSING_COUNT=$((MISSING_COUNT + 1))
+            fi
+            [ -n "$MD5" ] && CHECKED_COUNT=$((CHECKED_COUNT + 1))
+          done
+
+          # Check dvc.lock files for outputs related to this dataset
+          for lock_file in $(find "pipelines" -path "*${DATASET}*" -name "dvc.lock" 2>/dev/null); do
+            # Parse YAML-ish dvc.lock for md5 hashes in outs sections
+            # dvc.lock format has md5 under each output
+            LOCK_MD5S=$(grep -E "^\s+md5:" "$lock_file" 2>/dev/null | awk '{print $2}' || true)
+
+            for md5 in $LOCK_MD5S; do
+              if ! check_md5 "$md5" "$lock_file"; then
+                MISSING_COUNT=$((MISSING_COUNT + 1))
+              fi
+              [ -n "$md5" ] && CHECKED_COUNT=$((CHECKED_COUNT + 1))
+            done
+          done
+
+          if [ ${MISSING_COUNT} -gt 0 ]; then
+            echo ""
+            echo "❌ ${MISSING_COUNT}/${CHECKED_COUNT} data objects missing from remote storage"
+            echo "   The tag exists but data may not have been pushed."
+            echo "   Run 'dvc push' in the data-registry repo to fix this."
+            exit 1
+          fi
+
+          if [ ${CHECKED_COUNT} -eq 0 ]; then
+            echo "⚠️  No MD5 hashes found to verify"
+          else
+            echo "✅ All ${CHECKED_COUNT} data objects verified in remote storage"
+          fi
+        fi
+
+        cd - > /dev/null
+
+        echo ""
+        echo "✅ Resolved: ${DATASET} @ ${RESOLVED_VERSION}"
+        echo "   Full tag: ${FULL_TAG}"
+
+        echo "resolved-version=${RESOLVED_VERSION}" >> $GITHUB_OUTPUT
+        echo "full-tag=${FULL_TAG}" >> $GITHUB_OUTPUT
+        echo "dataset=${DATASET}" >> $GITHUB_OUTPUT
