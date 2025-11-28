@@ -50,7 +50,7 @@ runs:
       shell: bash
       run: |
         echo "🔍 Verifying cluster connectivity..."
-        if ! kubectl cluster-info --request-timeout=10s; then
+        if ! kubectl get nodes --request-timeout=10s > /dev/null 2>&1; then
           echo "❌ Failed to connect to cluster"
           exit 1
         fi
