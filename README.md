@@ -15,7 +15,7 @@
 <h1 align="center">GitHub Standards & Templates</h1>
 
 <p align="center">
-    Central repository for managing OpenCloudHub's GitHub metadata, workflows, contribution standards, branding, and reusable templates.<br />
+    Central repository for managing OpenCloudHub's GitHub metadata, reusable workflows, contribution standards, branding, and templates.<br />
     <a href="https://github.com/opencloudhub"><strong>Explore the organization »</strong></a>
   </p>
 
@@ -43,14 +43,13 @@ ______________________________________________________________________
 <details>
   <summary>📑 Table of Contents</summary>
   <ol>
+    <li><a href="#about">About</a></li>
+    <li><a href="#thesis-context">Thesis Context</a></li>
     <li><a href="#features">Features</a></li>
-    <li><a href="#branding">Branding</a></li>
-    <li><a href="#emplates">Templates</a></li>
-    <li><a href="#ared-configurations">Shared Configurations</a></li>
-    <li><a href="#rkflows--automation">Workflows & Automation</a></li>
+    <li><a href="#architecture">Architecture</a></li>
     <li><a href="#getting-started">Getting Started</a></li>
-    <li><a href="#object-structure">Project Structure</a></li>
-    <li><a href="#ontributing">Contributing</a></li>
+    <li><a href="#project-structure">Project Structure</a></li>
+    <li><a href="#contributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
     <li><a href="#contact">Contact</a></li>
   </ol>
@@ -58,75 +57,138 @@ ______________________________________________________________________
 
 ______________________________________________________________________
 
+<h2 id="about">🎯 About</h2>
+
+This repository serves as the **centralized GitHub configuration hub** for the OpenCloudHub organization. It provides organization-wide standards, reusable CI/CD workflows, and templates that ensure consistency across all repositories in the platform.
+
+**What problem does this solve?**
+
+In a multi-repository MLOps platform, maintaining consistent CI/CD pipelines, code quality standards, and documentation templates across dozens of repos becomes a maintenance burden. This repository solves that by:
+
+- Providing **reusable GitHub Actions workflows** that any repo can import
+- Defining **custom composite actions** for common MLOps tasks (DVC versioning, Docker tag resolution, kubectl setup)
+- Centralizing **issue templates, PR templates, and contribution guidelines**
+- Hosting **branding assets** for consistent visual identity
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+______________________________________________________________________
+
+<h2 id="thesis-context">🎓 Thesis Context</h2>
+
+This repository is part of a **Master's thesis project** exploring cloud-native MLOps platform engineering. The research investigates how to build modern, production-ready infrastructure for machine learning workflows.
+
+**Role of This Repository:**
+
+- Demonstrates **GitOps principles** for organization-wide configuration
+- Shows **workflow reusability patterns** across a multi-repo architecture
+- Implements **MLOps-specific CI/CD patterns** (DVC integration, model deployment triggers)
+
+For the full platform architecture, see the [organization profile](https://github.com/opencloudhub).
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+______________________________________________________________________
+
 <h2 id="features">✨ Features</h2>
 
-This repository serves as the centralized location for **organization-level GitHub configuration and standards** across all `OpenCloudHub` repositories. It contains:
+### Reusable Workflows
 
-- Branding and logo assets
-- Markdown and metadata templates
-- CI workflow definitions
-- Pre-commit and linting configurations
-- GitHub profile page (`profile/README.md`)
-- Labeling, dependabot, and security policies
+- **`shared-ci-code-quality.yaml`** — Pre-commit hooks with hadolint, shellcheck, typos, and biome
+- **`shared-ci-test-python.yaml`** — Python testing with pytest, coverage thresholds, and uv package manager
+- **`shared-ci-docker-build-push.yaml`** — Multi-stage Docker builds with registry caching and semantic tagging
+- **`shared-mlops-pipeline.yaml`** — Full ML lifecycle orchestration via Argo Workflows
 
-All other repositories within the organization can reference or copy these resources to ensure **standardization and compliance**.
+### Custom Composite Actions
 
-______________________________________________________________________
+- **`resolve-docker-tag`** — Finds the SHA-tagged image matching 'latest' for reproducible deployments
+- **`resolve-dvc-version`** — Validates and resolves DVC data versions from the data registry
+- **`setup-kubectl`** — Configures kubectl with cluster access for pipeline submissions
 
-<h2 id="branding">🎨 Branding</h2>
+### Templates & Standards
 
-The `/brand` folder contains assets and styling guidelines for use in documentation, websites, or repository READMEs:
+- **Issue templates** — Bug, Feature, Epic, Task, Research, Documentation (YAML-configured)
+- **PR template** — Structured checklist with change types and review requirements
+- **Community files** — CONTRIBUTING.md, CODE_OF_CONDUCT.md, SECURITY.md
+- **README template** — Standardized project documentation structure
 
-- Logos (SVG, PNG)
-- Style guide (`style-guide.md`)
-- CSS variables for consistent theming
+### Branding & Assets
 
-Use the **light-background** logo variants for public documentation to ensure maximum compatibility across light/dark themes.
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-______________________________________________________________________
-
-<h2 id="templates">🧰 Templates</h2>
-
-Available templates under `/templates` and `.github`:
-
-- **README_TEMPLATE.md**: General-purpose, pre-structured project README template
-- **Issue templates**: Bug reports and feature requests (YAML-configured)
-- **Pull request template**
-- **CONTRIBUTING.md**, **CODE_OF_CONDUCT.md**, **SECURITY.md**: Community and contribution policies
-
-These templates enable fast, standardized setup for any new repository under the organization.
+- **Logo suite** — Light/dark variants for all contexts
+- **Style guide** — Color palette, typography, spacing system
+- **CSS variables** — Ready-to-use design tokens
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ______________________________________________________________________
 
-<h2 id="shared-configurations">⚙️ Shared Configurations</h2>
+<h2 id="architecture">🏗️ Architecture</h2>
 
-Reusable configurations and tools for repository maintainers and contributors:
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                        OpenCloudHub Organization                            │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│   ┌─────────────────┐    imports     ┌─────────────────────────────────┐    │
+│   │  AI Team Repos  │ ─────────────▶│                                 │    │
+│   │  - ai-ml-repo   │                │   .github Repository (this)     │    │
+│   │  - ai-dl-repo   │                │                                 │    │
+│   │  - ai-genai-repo│                │   ┌─────────────────────────┐   │    │
+│   └─────────────────┘                │   │   Reusable Workflows    │   │    │
+│                                      │   │   ├─ ci.yaml            │   │    │
+│   ┌─────────────────┐    imports     │   │   ├─ code-quality.yaml  │   │    │
+│   │  Platform Repos │ ─────────────▶│   │   ├─ docker-build.yaml  │   │    │
+│   │  - infra-live   │                │   │   ├─ python-test.yaml   │   │    │
+│   │  - gitops       │                │   │   └─ mlops-pipeline.yaml│   │    │
+│   │  - docs         │                │   └─────────────────────────┘   │    │
+│   └─────────────────┘                │                                 │    │
+│                                      │   ┌─────────────────────────┐   │    │
+│   ┌─────────────────┐    imports     │   │   Composite Actions     │   │    │
+│   │  App Team Repos │ ─────────────▶│   │   ├─ resolve-docker-tag │   │    │
+│   │  - frontend     │                │   │   ├─ resolve-dvc-version│   │    │
+│   │  - backend      │                │   │   └─ setup-kubectl      │   │    │
+│   └─────────────────┘                │   └─────────────────────────┘   │    │
+│                                      │                                 │    │
+│                                      └─────────────────────────────────┘    │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
 
-- `config/pre-commit-config.yaml`: Centralized pre-commit hook setup
-- `.github/labeler.yml`: Automatic labeling of pull requests based on file paths
-- `dependabot.yml`: Common dependency update configuration
+### Workflow Flow (MLOps Pipeline Example)
 
-Pre-commit config can be symlinked or copied into individual repos. The code quality workflow will enforce this configuration via CI.
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-______________________________________________________________________
-
-<h2 id="workflows-automation">🤖 Workflows & Automation</h2>
-
-Reusable workflows are stored under `.github/workflows` and can be shared via `workflow_call`. Examples include:
-
-- Python testing & linting
-- Docker build & push
-- Node.js/Next.js CI
-- Pre-commit hook enforcement
-- Markdown linting and README validation
-
-These workflows can be imported into any repository in the organization for consistent CI/CD practices.
+```
+Dispatches Workflow ( Could be set up to trigger automatically or on schedule/external trigger)
+        │
+        ▼
+┌───────────────────────┐
+│ train.yaml triggers   │ ◀── Defined in consuming repo
+└─────────┬─────────────┘
+          │ uses
+          ▼
+┌───────────────────────────────────────────────────────────────┐
+│                  shared-mlops-pipeline.yaml                   │
+│                                                               │
+│  ┌─────────────┐   ┌─────────────┐   ┌─────────────────────┐  │
+│  │resolve-dvc- │   │resolve-     │   │setup-kubectl        │  │
+│  │version      │   │docker-tag   │   │                     │  │
+│  │             │   │             │   │                     │  │
+│  │ Validates   │   │ Finds       │   │ Configures cluster  │  │
+│  │ data version│   │ image SHA   │   │ access              │  │
+│  └──────┬──────┘   └──────┬──────┘   └──────────┬──────────┘  │
+│         │                 │                      │            │
+│         └────────────────┬┴──────────────────────┘            │
+│                          ▼                                    │
+│            ┌─────────────────────────┐                        │
+│            │ Submit Argo Workflow    │                        │
+│            │ to Kubernetes cluster   │                        │
+│            └─────────────────────────┘                        │
+└───────────────────────────────────────────────────────────────┘
+                           │
+                           ▼
+              ┌─────────────────────────┐
+              │   Argo Workflows (K8s)  │
+              │   Train → Eval → Deploy │
+              └─────────────────────────┘
+```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -134,59 +196,128 @@ ______________________________________________________________________
 
 <h2 id="getting-started">🚀 Getting Started</h2>
 
-To make use of this repository’s content in your own repo:
+### Using Reusable Workflows
 
-1. Reference templates manually or via automation
-1. Use `uses: opencloudhub/.github/.github/workflows/<workflow>.yaml@main` in your Actions
-1. Copy branding assets or style guide as needed
-1. Clone or curl raw pre-commit config:
-   ```sh
-   curl -O https://raw.githubusercontent.com/opencloudhub/.github/main/config/pre-commit-config.yaml
-   ```
+In your repository's `.github/workflows/ci.yaml`:
+
+```yaml
+name: CI
+on: [push, pull_request]
+
+jobs:
+  code-quality:
+    uses: opencloudhub/.github/.github/workflows/shared-ci-code-quality.yaml@main
+
+  test:
+    uses: opencloudhub/.github/.github/workflows/shared-ci-test-python.yaml@main
+    with:
+      python-version: "3.12"
+      coverage-threshold: "85"
+
+  build:
+    uses: opencloudhub/.github/.github/workflows/shared-ci-docker-build-push.yaml@main
+    with:
+      repo-name: my-service
+    secrets:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
+```
+
+### Using Custom Actions
+
+```yaml
+steps:
+  - name: Resolve data version
+    uses: OpenCloudHub/.github/.github/actions/resolve-dvc-version@main
+    with:
+      dataset: wine-quality
+      version: latest
+      dvc-repo: ${{ vars.DVC_REPO_URL }}
+
+  - name: Resolve image tag
+    uses: OpenCloudHub/.github/.github/actions/resolve-docker-tag@main
+    with:
+      repo: opencloudhub/wine-classifier
+      prefix: main
+      tag: latest
+```
+
+### Using Templates
+
+1. Copy `assets/templates/README_TEMPLATE.md` to your new repo
+1. Use issue templates automatically (inherited from this repo)
+1. Reference branding assets via raw GitHub URLs
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-<!-- PROJECT STRUCTURE -->
+______________________________________________________________________
 
 <h2 id="project-structure">📁 Project Structure</h2>
 
 ```
 .github/
-├── brand/
-│   ├── assets/                 # Logos and visual assets
-│   ├── style-guide.md          # Branding rules
-│   └── templates/              # CSS variables, UI references
-├── config/
-│   └── pre-commit-config.yaml  # Shared pre-commit hooks
-├── profile/
-│   └── README.md               # Org profile page
-├── templates/
-│   └── README_TEMPLATE.md      # Project README boilerplate
-├── .github/
-│   ├── ISSUE_TEMPLATE/         # Issue templates (YAML)
-│   ├── workflows/              # Shared GitHub Actions workflows
-│   ├── PULL_REQUEST_TEMPLATE.md
-│   ├── labeler.yml             # Auto-labeling config
-│   ├── CODE_OF_CONDUCT.md
-│   ├── CONTRIBUTING.md
-│   └── SECURITY.md
-├── LICENSE
-└── README.md                   # This file
+├── README.md                        # This file
+│
+├── .github/                         # GitHub-specific configurations
+│   ├── workflows/                   # Reusable CI/CD workflows
+│   │   ├── ci.yaml                  # Main entry point for this repo
+│   │   ├── shared-ci-code-quality.yaml    # Pre-commit & linting
+│   │   ├── shared-ci-test-python.yaml     # Python testing
+│   │   ├── shared-ci-docker-build-push.yaml # Container builds
+│   │   └── shared-mlops-pipeline.yaml     # ML lifecycle orchestration
+│   │
+│   ├── actions/                     # Custom composite actions
+│   │   ├── resolve-docker-tag/      # Docker tag resolution
+│   │   ├── resolve-dvc-version/     # DVC data version resolution
+│   │   └── setup-kubectl/           # Kubernetes CLI setup
+│   │
+│   ├── ISSUE_TEMPLATE/              # Issue templates (YAML forms)
+│   │   ├── bug.yaml                 # Bug report template
+│   │   ├── feature.yaml             # Feature request template
+│   │   ├── epic.yaml                # Epic/initiative template
+│   │   ├── task.yaml                # Task template
+│   │   ├── research.yaml            # Research/investigation template
+│   │   └── documentation.yaml       # Documentation task template
+│   │
+│   ├── PULL_REQUEST_TEMPLATE.md     # PR template with checklists
+│   ├── CONTRIBUTING.md              # Contribution guidelines
+│   ├── CODE_OF_CONDUCT.md           # Community standards
+│   ├── SECURITY.md                  # Security policy
+│   ├── dependabot.yaml              # Dependency update config
+│   └── labeler.yaml                 # Auto-labeling rules
+│
+├── assets/
+│   ├── brand/                       # Branding assets
+│   │   ├── assets/logos/            # Logo files (SVG)
+│   │   ├── style-guide.md           # Design system documentation
+│   │   └── templates/css-variables.css # Design tokens
+│   │
+│   └── templates/
+│       └── README_TEMPLATE.md       # Standardized README template
+│
+└── profile/
+    └── README.md                    # Organization profile page
 ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-<!-- CONTRIBUTING -->
+______________________________________________________________________
 
 <h2 id="contributing">👥 Contributing</h2>
 
-Contributions are welcome! This template is designed to make contribution as smooth as possible with templates and guidelines.
+Contributions are welcome after my thesis ends! When modifying shared workflows or actions, please ensure backward compatibility with existing consumers.
 
-Please see our [Contributing Guidelines](../.github/CONTRIBUTING.md) and [Code of Conduct](../.github/CODE_OF_CONDUCT.md) for more details.
+**Before submitting:**
+
+- Test workflow changes in a fork first
+- Update documentation headers in YAML files
+- Follow the existing code style and emoji conventions
+
+Please see our [Contributing Guidelines](.github/CONTRIBUTING.md) and [Code of Conduct](.github/CODE_OF_CONDUCT.md) for more details.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-<!-- LICENSE -->
+______________________________________________________________________
 
 <h2 id="license">📄 License</h2>
 
@@ -194,7 +325,7 @@ Distributed under the Apache 2.0 License. See [LICENSE](/LICENSE) for more infor
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-<!-- CONTACT -->
+______________________________________________________________________
 
 <h2 id="contact">📬 Contact</h2>
 
@@ -202,13 +333,23 @@ Organization Link: [https://github.com/OpenCloudHub](https://github.com/OpenClou
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-<!-- ACKNOWLEDGEMENTS -->
+______________________________________________________________________
 
-<h2 id="acknowledgements">🙏 Acknowledgements</h2>
-Share links or references to useful resources:
+<div align="center">
+  <h3>🌟 Part of the OpenCloudHub Platform</h3>
+  <p><em>Building a production-ready MLOps platform • Master's Thesis Project</em></p>
 
-- [Best-README-Template](https://github.com/othneildrew/Best-README-Template) - The foundation for this README design
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<div>
+    <a href="https://opencloudhub.github.io/docs">
+      <img src="https://img.shields.io/badge/Read%20the%20Docs-2596BE?style=for-the-badge&logo=read-the-docs&logoColor=white" alt="Documentation">
+    </a>
+    <a href="https://github.com/orgs/opencloudhub/discussions">
+      <img src="https://img.shields.io/badge/Join%20Discussion-181717?style=for-the-badge&logo=github&logoColor=white" alt="Discussions">
+    </a>
+    <a href="https://github.com/orgs/opencloudhub/projects/4">
+      <img src="https://img.shields.io/badge/View%20Roadmap-0052CC?style=for-the-badge&logo=jira&logoColor=white" alt="Roadmap">
+    </a>
+  </div>
+</div>
 
 <!-- MARKDOWN LINKS & IMAGES -->

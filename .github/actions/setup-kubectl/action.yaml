@@ -1,23 +1,70 @@
-# .github/actions/setup-kubectl/action.yaml
-name: 'Setup kubectl'
-description: 'Install and configure kubectl with cluster access'
+# =============================================================================
+# Setup kubectl - Composite Action
+# =============================================================================
+#
+# Installs and configures kubectl for Kubernetes cluster access in CI/CD.
+# Used by MLOps pipelines to submit Argo Workflows to the cluster.
+#
+# Features
+# --------
+# - Installs kubectl if not present (downloads stable release)
+# - Configures kubeconfig from base64-encoded secret
+# - Optional cluster connectivity verification
+# - Idempotent: skips installation if kubectl already exists
+#
+# Security Notes
+# --------------
+# - kubeconfig is stored in ~/.kube/config with 600 permissions
+# - Use short-lived, scoped service account tokens when possible
+# - The verify step confirms cluster access before proceeding
+#
+# Inputs
+# ------
+# kube-config : Base64 encoded kubeconfig content (required)
+# verify      : Test cluster connectivity (default: true)
+#
+# Outputs
+# -------
+# kubectl-path : Path to kubectl binary
+#
+# Usage
+# -----
+#   - uses: OpenCloudHub/.github/.github/actions/setup-kubectl@main
+#     with:
+#       kube-config: ${{ secrets.KUBE_CONFIG }}
+#
+#   - run: kubectl get pods -n mlops
+#
+# Creating the Secret
+# -------------------
+#   # On your local machine with cluster access:
+#   cat ~/.kube/config | base64 -w0 > kube-config-b64.txt
+#   # Add to GitHub Secrets as KUBE_CONFIG
+#
+# See Also
+# --------
+# - shared-mlops-pipeline.yaml : Primary consumer of this action
+# =============================================================================
+
+name: "Setup kubectl"
+description: "Install and configure kubectl with cluster access"
 
 inputs:
   kube-config:
-    description: 'Base64 encoded kubeconfig'
+    description: "Base64 encoded kubeconfig"
     required: true
   verify:
-    description: 'Verify cluster connectivity'
+    description: "Verify cluster connectivity"
     required: false
-    default: 'true'
+    default: "true"
 
 outputs:
   kubectl-path:
-    description: 'Path to kubectl binary'
+    description: "Path to kubectl binary"
     value: ${{ steps.install.outputs.kubectl-path }}
 
 runs:
-  using: 'composite'
+  using: "composite"
   steps:
     - name: 🔧 Install kubectl
       id: install

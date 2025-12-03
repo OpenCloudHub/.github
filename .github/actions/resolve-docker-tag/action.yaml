@@ -1,44 +1,100 @@
-# .github/actions/resolve-docker-tag/action.yaml
-name: 'Resolve Docker Tag'
-description: 'Resolve Docker image tags - validates explicit tags or finds latest for a prefix'
+# =============================================================================
+# Resolve Docker Tag - Composite Action
+# =============================================================================
+#
+# Resolves Docker image tags for deployment workflows. Supports finding the
+# tag that matches 'latest' or validating specific tags exist.
+#
+# Problem Solved
+# --------------
+# When deploying, we want reproducibility (specific SHA tags) but also
+# convenience ('latest'). This action bridges both by:
+# 1. Finding which {prefix}-{sha} tag matches 'latest' digest
+# 2. Validating that explicitly requested tags exist before deploying
+#
+# Algorithm
+# ---------
+# If tag='latest':
+#   1. Get digest of 'latest' tag
+#   2. List all {prefix}-* tags
+#   3. Find which tag has matching digest
+#   4. Return that tag (e.g., 'main-abc1234')
+#
+# If tag is specific (e.g., 'abc1234'):
+#   1. Check if {prefix}-{tag} exists
+#   2. Fail fast if not found with helpful suggestions
+#
+# Inputs
+# ------
+# username : Docker registry username (for private repos)
+# token    : Docker registry token (for private repos)
+# repo     : Full repo name (e.g., 'opencloudhub/wine-classifier-training')
+# prefix   : Tag prefix to search (e.g., 'main', 'pr')
+# tag      : 'latest' or specific suffix (e.g., 'abc123')
+# registry : Container registry (default: 'docker.io')
+#
+# Outputs
+# -------
+# resolved-tag : The resolved tag (e.g., 'main-abc123')
+# full-image   : Complete image reference (e.g., 'repo:main-abc123')
+# digest       : Image digest for verification
+#
+# Usage
+# -----
+#   - uses: OpenCloudHub/.github/.github/actions/resolve-docker-tag@main
+#     with:
+#       username: ${{ secrets.DOCKER_USERNAME }}
+#       token: ${{ secrets.DOCKER_TOKEN }}
+#       repo: opencloudhub/my-service
+#       prefix: main
+#       tag: latest
+#
+# See Also
+# --------
+# - shared-ci-docker-build-push.yaml : Builds and tags images
+# - shared-mlops-pipeline.yaml : Uses this action for deployments
+# =============================================================================
+
+name: "Resolve Docker Tag"
+description: "Resolve Docker image tags - validates explicit tags or finds latest for a prefix"
 
 inputs:
   username:
-    description: 'Docker registry username (required for private repos)'
+    description: "Docker registry username (required for private repos)"
     required: false
-    default: ''
+    default: ""
   token:
-    description: 'Docker registry token/password (required for private repos)'
+    description: "Docker registry token/password (required for private repos)"
     required: false
-    default: ''
+    default: ""
   repo:
-    description: 'Docker repository (e.g., opencloudhuborg/wine-classifier-training)'
+    description: "Docker repository (e.g., opencloudhuborg/wine-classifier-training)"
     required: true
   prefix:
-    description: 'Tag prefix (e.g., main, pr)'
+    description: "Tag prefix (e.g., main, pr)"
     required: true
   tag:
     description: 'Tag to resolve - "latest" to find most recent, or specific suffix (e.g., abc123)'
     required: true
-    default: 'latest'
+    default: "latest"
   registry:
-    description: 'Container registry (docker.io, ghcr.io)'
+    description: "Container registry (docker.io, ghcr.io)"
     required: false
-    default: 'docker.io'
+    default: "docker.io"
 
 outputs:
   resolved-tag:
-    description: 'Resolved tag (e.g., main-abc123)'
+    description: "Resolved tag (e.g., main-abc123)"
     value: ${{ steps.resolve.outputs.resolved-tag }}
   full-image:
-    description: 'Full image reference (e.g., opencloudhuborg/wine-classifier:main-abc123)'
+    description: "Full image reference (e.g., opencloudhuborg/wine-classifier:main-abc123)"
     value: ${{ steps.resolve.outputs.full-image }}
   digest:
-    description: 'Image digest'
+    description: "Image digest"
     value: ${{ steps.resolve.outputs.digest }}
 
 runs:
-  using: 'composite'
+  using: "composite"
   steps:
     - name: 🔍 Resolve Docker tag
       id: resolve

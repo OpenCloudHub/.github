@@ -1,9 +1,46 @@
+# =============================================================================
+# Shared Code Quality Workflow
+# =============================================================================
+#
+# Reusable workflow for enforcing code quality standards across all repos.
+# Runs pre-commit hooks with configurable linting rules.
+#
+# Features
+# --------
+# - Downloads centralized pre-commit config from this repo
+# - Caches system dependencies (hadolint, shellcheck, typos)
+# - Caches pre-commit environments for faster subsequent runs
+# - Runs all configured hooks on all files
+#
+# Inputs
+# ------
+# config-url : URL to pre-commit config (defaults to org standard)
+#
+# Tools Installed
+# ---------------
+# - hadolint   : Dockerfile linting
+# - shellcheck : Shell script analysis
+# - typos      : Spell checking for code
+# - biome      : JavaScript/TypeScript formatting
+#
+# Usage
+# -----
+# In your repo's workflow:
+#   jobs:
+#     code-quality:
+#       uses: opencloudhub/.github/.github/workflows/shared-ci-code-quality.yaml@main
+#
+# See Also
+# --------
+# - .pre-commit-config.yaml : Hook definitions (in repo root)
+# =============================================================================
+
 name: Shared Code Quality
 on:
   workflow_call:
     inputs:
       config-url:
-        description: 'URL to the pre-commit config file'
+        description: "URL to the pre-commit config file"
         type: string
         default: https://raw.githubusercontent.com/opencloudhub/.github/main/.pre-commit-config.yaml
 
@@ -26,12 +63,12 @@ jobs:
       - name: 🔧 Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
+          python-version: "3.12"
 
       - name: 🔧 Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: "20"
 
       - name: 💾 Cache system dependencies
         id: cache-deps

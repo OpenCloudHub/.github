@@ -1,52 +1,114 @@
-# .github/actions/resolve-dvc-version/action.yaml
-name: 'Resolve DVC Data Version'
-description: 'Resolve DVC data version - validates tags and optionally verifies data exists in remote'
+# =============================================================================
+# Resolve DVC Data Version - Composite Action
+# =============================================================================
+#
+# Resolves DVC (Data Version Control) data versions from a central data
+# registry repository. Ensures data versioning consistency across ML pipelines.
+#
+# Architecture
+# ------------
+# Data Registry Repo     This Action         ML Training Pipeline
+#       |                    |                       |
+#  [Tags: dataset-v1.0.0]    |                       |
+#  [.dvc files]         → Resolve Tag →         [Pull Data]
+#  [dvc.lock files]          |                       |
+#  [MinIO Remote]            └───────────────────────┘
+#
+# Features
+# --------
+# - Resolves 'latest' to most recent version tag
+# - Validates specific version tags exist
+# - Verifies DVC tracking files (.dvc, dvc.lock) are present ( ⚠️ Expects paths like in the current data registry implementation)
+# - Optional: Verifies data exists in remote storage (MinIO/S3)
+#
+# Tag Naming Convention
+# ---------------------
+# {dataset}-{version}  e.g., wine-quality-v1.0.0, mnist-v2.1.0
+#
+# Inputs
+# ------
+# dataset              : Dataset name (e.g., 'wine-quality')
+# version              : 'latest' or specific (e.g., 'v1.0.0')
+# dvc-repo             : DVC registry repository URL
+# verify-remote        : Check if data exists in storage (default: false)
+# verify-remote-strict : Fail if data missing (default: false)
+# aws-*                : AWS/MinIO credentials for remote verification
+#
+# Outputs
+# -------
+# resolved-version : Version string (e.g., 'v1.0.0')
+# full-tag         : Complete git tag (e.g., 'wine-quality-v1.0.0')
+# dataset          : Pass-through of dataset name
+#
+# Validation Steps
+# ----------------
+# 1. List all tags matching {dataset}-v* pattern
+# 2. If 'latest', select highest version (semver sort)
+# 3. Sparse checkout to verify DVC files exist at tag
+# 4. Optionally verify data objects in remote storage
+#
+# Usage
+# -----
+#   - uses: OpenCloudHub/.github/.github/actions/resolve-dvc-version@main
+#     with:
+#       dataset: wine-quality
+#       version: latest
+#       dvc-repo: ${{ vars.DVC_REPO_URL }}
+#
+# See Also
+# --------
+# - shared-mlops-pipeline.yaml : Uses this for training data
+# - DVC documentation : https://dvc.org/doc
+# =============================================================================
+
+name: "Resolve DVC Data Version"
+description: "Resolve DVC data version - validates tags and optionally verifies data exists in remote"
 
 inputs:
   dataset:
-    description: 'Dataset name (e.g., opencloudhub-readmes, emotion, wine-quality)'
+    description: "Dataset name (e.g., opencloudhub-readmes, emotion, wine-quality)"
     required: true
   version:
     description: 'Version to resolve - "latest" for most recent, or specific (e.g., v1.0.0)'
     required: true
-    default: 'latest'
+    default: "latest"
   dvc-repo:
-    description: 'DVC repository URL'
+    description: "DVC repository URL"
     required: true
   verify-remote:
-    description: 'Verify data exists in remote storage (requires AWS creds)'
+    description: "Verify data exists in remote storage (requires AWS creds)"
     required: false
-    default: 'false'
+    default: "false"
   verify-remote-strict:
-    description: 'Fail if remote data is missing (false = warn only)'
+    description: "Fail if remote data is missing (false = warn only)"
     required: false
-    default: 'false'
+    default: "false"
   aws-access-key-id:
-    description: 'AWS access key (required if verify-remote is true)'
+    description: "AWS access key (required if verify-remote is true)"
     required: false
-    default: ''
+    default: ""
   aws-secret-access-key:
-    description: 'AWS secret key (required if verify-remote is true)'
+    description: "AWS secret key (required if verify-remote is true)"
     required: false
-    default: ''
+    default: ""
   aws-endpoint-url:
-    description: 'S3 endpoint URL (for MinIO)'
+    description: "S3 endpoint URL (for MinIO)"
     required: false
-    default: ''
+    default: ""
 
 outputs:
   resolved-version:
-    description: 'Resolved version (e.g., v1.0.0)'
+    description: "Resolved version (e.g., v1.0.0)"
     value: ${{ steps.resolve-tag.outputs.resolved-version }}
   full-tag:
-    description: 'Full git tag (e.g., opencloudhub-readmes-v1.0.0)'
+    description: "Full git tag (e.g., opencloudhub-readmes-v1.0.0)"
     value: ${{ steps.resolve-tag.outputs.full-tag }}
   dataset:
-    description: 'Dataset name (pass-through for convenience)'
+    description: "Dataset name (pass-through for convenience)"
     value: ${{ inputs.dataset }}
 
 runs:
-  using: 'composite'
+  using: "composite"
   steps:
     # =========================================================================
     # Step 1: Resolve git tag (latest or specific)

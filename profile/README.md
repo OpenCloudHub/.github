@@ -126,7 +126,7 @@ ______________________________________________________________________
 - **Learn Integration Patterns:** See how modern cloud-native tools work together
 - **Contribute Ideas:** Join discussions about platform engineering approaches
 
-<!-- # TODO: add some videos here -->
+<!-- # TODO: add some videos here, ADJUST AND UPDATE-->
 
 ### 💡 Demos
 

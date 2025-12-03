@@ -1,3 +1,45 @@
+# =============================================================================
+# Shared Python Testing Workflow
+# =============================================================================
+#
+# Reusable workflow for running Python test suites with pytest.
+# Supports coverage analysis and configurable thresholds.
+#
+# Features
+# --------
+# - Automatic Python project detection (pyproject.toml, requirements.txt, uv.lock)
+# - Uses uv package manager for fast dependency installation
+# - Configurable coverage thresholds with fail-under enforcement
+# - Supports monorepo structures with working-directory input
+#
+# Inputs
+# ------
+# python-version     : Python version to use (default: "3.11")
+# working-directory  : Project directory for monorepos (default: ".")
+# run-coverage       : Enable coverage analysis (default: true)
+# coverage-threshold : Minimum coverage percentage (default: "80")
+#
+# Dependency Resolution Order
+# ---------------------------
+# 1. uv.lock      → uv sync --locked
+# 2. pyproject.toml → uv sync
+# 3. requirements.txt → uv pip install
+#
+# Usage
+# -----
+#   jobs:
+#     test:
+#       uses: opencloudhub/.github/.github/workflows/shared-ci-test-python.yaml@main
+#       with:
+#         python-version: "3.12"
+#         coverage-threshold: "90"
+#
+# See Also
+# --------
+# - shared-ci-code-quality.yaml : Linting and formatting
+# - uv documentation : https://docs.astral.sh/uv/
+# =============================================================================
+
 name: Shared Python Tests
 on:
   workflow_call:

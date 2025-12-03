@@ -1,68 +1,144 @@
+# =============================================================================
+# Shared MLOps Pipeline Workflow
+# =============================================================================
+#
+# Reusable workflow that triggers the full ML lifecycle via Argo Workflows.
+# This is the bridge between GitHub Actions and the Kubernetes-based ML platform.
+#
+# Architecture
+# ------------
+# GitHub Actions → This Workflow → Argo Workflow (K8s) → ML Pipeline
+#                                        ↓
+#                    [Train] → [Evaluate] → [Compare] → [Deploy]
+#
+# Features
+# --------
+# - DVC data versioning integration (resolves tags from data registry)
+# - Docker image tag resolution (finds latest or validates specific tags)
+# - Automatic model comparison against production baseline
+# - Configurable approval modes (manual/automatic promotion)
+# - Comprehensive GitHub Step Summary with monitoring links
+#
+# Inputs
+# ------
+# model_name            : Model identifier (e.g., wine-classifier)
+# dvc_dataset           : Dataset name in DVC registry (required)
+# dvc_data_version      : Data version tag (default: 'latest')
+# experiment_name       : MLflow experiment for tracking
+# training_entrypoint   : Training script path (e.g., src/train.py)
+# training_args         : Additional CLI arguments for training
+# training_image_tag    : Training container tag (default: 'latest')
+# serving_image_tag     : Serving container tag (default: 'latest')
+# compute_type          : Resource allocation (e.g., 'cpu-small', 'gpu-large')
+# approval_mode         : 'manual' or 'automatic' promotion
+# comparison_metric     : Metric for model comparison (default: 'accuracy')
+# comparison_threshold  : Required improvement (default: 0.05 = 5%)
+#
+# Required Secrets
+# ----------------
+# KUBE_CONFIG      : Base64 kubeconfig for cluster access
+# DOCKER_USERNAME  : Container registry username
+# DOCKER_TOKEN     : Container registry token
+#
+# Required Variables
+# ------------------
+# DVC_REPO_URL : Git URL of the DVC data registry
+#
+# Pipeline Stages (Argo Workflow)
+# --------------------------------
+# 1. Data Pull     - Fetches versioned data from DVC remote (MinIO)
+# 2. Training      - Runs training script in container
+# 3. Evaluation    - Computes metrics on validation set
+# 4. Comparison    - Compares against production model
+# 5. Approval Gate - Manual or automatic based on threshold
+# 6. Deployment    - Promotes to production via KServe
+#
+# Usage
+# -----
+#   jobs:
+#     train:
+#       uses: opencloudhub/.github/.github/workflows/shared-mlops-pipeline.yaml@main
+#       with:
+#         model_name: wine-classifier
+#         dvc_dataset: wine-quality
+#         experiment_name: wine-experiments
+#         training_entrypoint: src/train.py
+#         compute_type: cpu-medium
+#       secrets: inherit
+#
+# See Also
+# --------
+# - resolve-dvc-version action   : DVC tag resolution
+# - resolve-docker-tag action    : Image tag validation
+# - setup-kubectl action         : Cluster authentication
+# - Argo Workflows documentation : https://argoproj.github.io/argo-workflows/
+# =============================================================================
+
 name: Shared MLOPS Pipeline
 
 on:
   workflow_call:
     inputs:
       model_name:
-        description: 'Model name (e.g., wine-classifier)'
+        description: "Model name (e.g., wine-classifier)"
         required: true
         type: string
       dvc_data_version:
         description: "Data version to use for training (latest or specific like v1.0.0)"
         required: false
         type: string
-        default: 'latest'
+        default: "latest"
       dvc_dataset:
         description: "Dataset name in DVC registry"
         required: true
         type: string
       experiment_name:
-        description: 'MLflow experiment name'
+        description: "MLflow experiment name"
         required: true
         type: string
       training_entrypoint:
-        description: 'Training script entrypoint'
+        description: "Training script entrypoint"
         required: true
         type: string
       training_args:
-        description: 'Additional training arguments'
+        description: "Additional training arguments"
         required: false
         type: string
-        default: ''
+        default: ""
       training_image_tag:
-        description: 'Training image tag (latest or specific like abc1234)'
+        description: "Training image tag (latest or specific like abc1234)"
         required: false
         type: string
-        default: 'latest'
+        default: "latest"
       serving_image_tag:
-        description: 'Serving image tag (latest or specific like abc1234)'
+        description: "Serving image tag (latest or specific like abc1234)"
         required: false
         type: string
-        default: 'latest'
+        default: "latest"
       compute_type:
-        description: 'Compute configuration'
+        description: "Compute configuration"
         required: true
         type: string
       approval_mode:
-        description: 'Approval mode (manual or automatic)'
+        description: "Approval mode (manual or automatic)"
         required: false
         type: string
-        default: 'manual'
+        default: "manual"
       comparison_metric:
-        description: 'Metric to compare (accuracy, f1_score, etc.)'
+        description: "Metric to compare (accuracy, f1_score, etc.)"
         required: false
         type: string
-        default: 'accuracy'
+        default: "accuracy"
       comparison_higher_is_better:
-        description: 'Whether higher metric values are better (true/false)'
+        description: "Whether higher metric values are better (true/false)"
         required: false
         type: boolean
         default: true
       comparison_threshold:
-        description: 'Minimum improvement threshold (e.g., 0.05 = 5%)'
+        description: "Minimum improvement threshold (e.g., 0.05 = 5%)"
         required: false
         type: string
-        default: '0.05'
+        default: "0.05"
 
 jobs:
   submit-workflow:

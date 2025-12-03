@@ -1,9 +1,12 @@
+# =============================================================================
+# CI Pipeline for this Repo itself
+# =============================================================================
+
 name: CI
 on:
   pull_request:
   push:
     branches-ignore: [main] # Avoid redundancy when enforcing PRs
-
 
 jobs:
   code-quality:

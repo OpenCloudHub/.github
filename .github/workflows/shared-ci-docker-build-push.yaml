@@ -1,3 +1,54 @@
+# =============================================================================
+# Shared Docker Build, Scan & Push Workflow
+# =============================================================================
+#
+# Reusable workflow for building, scanning, and pushing container images.
+# Optional vulnerability scanning.
+#
+# Features
+# --------
+# - Multi-stage build support with target selection
+# - Registry cache for faster builds (BuildKit cache mode=max)
+# - Automatic semantic tagging (branch-sha, PR refs, latest)
+# - Optional Trivy security scanning (currently commented out to make less strict and faster)
+# - SARIF upload to GitHub Security tab
+#
+# Inputs
+# ------
+# repo-name   : Image repository name (required)
+# context     : Build context directory (default: ".")
+# dockerfile  : Dockerfile path relative to context (default: "Dockerfile")
+# target      : Multi-stage build target (optional)
+# build-args  : Build arguments, one per line (optional)
+# push-on-pr  : Whether to push on PRs (default: false for security)
+#
+# Secrets
+# -------
+# DOCKER_USERNAME : Docker Hub username
+# DOCKER_TOKEN    : Docker Hub access token
+#
+# Image Tags Generated
+# --------------------
+# - pr-{number}     : For pull requests
+# - {branch}-{sha}  : For branch pushes
+# - latest          : For default branch only
+#
+# Usage
+# -----
+#   jobs:
+#     build:
+#       uses: opencloudhub/.github/.github/workflows/shared-ci-docker-build-push.yaml@main
+#       with:
+#         repo-name: my-service
+#       secrets:
+#         DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+#         DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
+#
+# See Also
+# --------
+# - resolve-docker-tag action : Tag resolution for deployments
+# =============================================================================
+
 name: Shared Docker Build & Secure & Push
 on:
   workflow_call:
@@ -69,7 +120,7 @@ jobs:
           file: ${{ inputs.context }}/${{ inputs.dockerfile }}
           target: ${{ inputs.target }}
           build-args: ${{ inputs.build-args }}
-          load: true  # Load locally for scanning
+          load: true # Load locally for scanning
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=registry,ref=${{ env.DOCKER_REPO }}:buildcache
