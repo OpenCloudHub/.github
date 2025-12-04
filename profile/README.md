@@ -11,168 +11,168 @@
     <img alt="OpenCloudHub Logo" src="https://raw.githubusercontent.com/opencloudhub/.github/main/assets/brand/assets/logos/primary-logo-dark.svg" style="max-width:700px; max-height:175px;">
   </picture>
   </a>
-  <h1>🚀 Modern Cloud-Native Platform Engineering</h1>
+  <h1>☸️ Cloud-Native MLOps Platform</h1>
   <p>
-    <strong>Master's Thesis Project:</strong> Exploring cloud-native MLOps infrastructure patterns<br>
-    <em>From local development to production-ready platform architecture</em>
+    <strong>Master's Thesis:</strong> A Scalable MLOps System for Multimodal Educational Analysis<br>
+    <em>Goethe University Frankfurt / DIPF Leibniz Institute</em>
   </p>
   <div>
     <img src="https://img.shields.io/badge/Kubernetes-326CE5?style=for-the-badge&logo=kubernetes&logoColor=white" alt="Kubernetes">
     <img src="https://img.shields.io/badge/ArgoCD-EF7B4D?style=for-the-badge&logo=argo&logoColor=white" alt="ArgoCD">
+    <img src="https://img.shields.io/badge/Ray-028CF0?style=for-the-badge&logo=ray&logoColor=white" alt="Ray">
     <img src="https://img.shields.io/badge/MLflow-0194E2?style=for-the-badge&logo=mlflow&logoColor=white" alt="MLflow">
-    <img src="https://img.shields.io/badge/Status-In%20Development-yellow?style=for-the-badge" alt="Status">
   </div>
   <br>
   <div>
     <a href="#overview"><strong>📖 Overview</strong></a> •
-    <a href="#current-status"><strong>📊 Status</strong></a> •
     <a href="#architecture"><strong>🏗️ Architecture</strong></a> •
-    <a href="#get-involved"><strong>🚀 Get Started</strong></a>
+    <a href="#repositories"><strong>📂 Repositories</strong></a> •
+    <a href="#demonstrations"><strong>🎬 Demos</strong></a>
   </div>
 </div>
 
-<h2 id="overview">📖 What is OpenCloudHub?</h2>
-OpenCloudHub is a research-driven MLOps platform being developed as part of a master's thesis. The project explores how to build modern, cloud-native infrastructure for machine learning workflows—starting with a local proof-of-concept and evolving toward production-ready patterns.
+______________________________________________________________________
 
-**Research Focus:**
+<h2 id="overview">📖 Overview</h2>
 
-- 🔬 How do modern cloud-native technologies integrate into cohesive platforms?
-- ☸️ What does comprehensive Kubernetes platform engineering look like in practice?
-- 🤖 How do MLOps workflows drive platform requirements and design decisions?
-- 🔐 How can we implement security, observability, and multi-tenancy from day one?
-- 📚 How do we bridge the gap between local academic research and industry practices?
+OpenCloudHub is an open-source, self-hostable MLOps platform developed as part of a master's thesis. It demonstrates how to build infrastructure for divers machine learning and AI workflows using cloud-native technologies—all deployable on institution-controlled infrastructure for data sovereignty.
 
-**ML Workloads We're Building For:**
+**Key Characteristics:**
 
-- 🤖 **Classical ML:** Predictive models using scikit-learn
-- 🧠 **Generative AI:** Fine-tuning BERT, Qwen, and other transformer models and llms
-- 🔄 **End-to-End Pipelines:** From data ingestion to model serving
--
+- 🔓 **Fully Open-Source** — No proprietary dependencies or vendor lock-in
+- 🏠 **Self-Hostable** — Deploy on your own infrastructure for data privacy
+- 🔄 **GitOps-First** — Git as single source of truth for all cluster state
+- 🤖 **ML Framework Agnostic** — sklearn, PyTorch, Transformers, LLMs
+- 📊 **End-to-End Traceability** — Data version → training run → deployed model
 
 ______________________________________________________________________
 
-<h2 id="architecture">🏗️ Architecture Overview</h2>
+<h2 id="architecture">🏗️ Architecture</h2>
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
-│                          GitOps & Infrastructure                        │
-│  GitHub Actions • Argo CD • Terraform • Terragrunt • Helm/Kustomize   │
-├─────────────────┬─────────────────┬─────────────────┬─────────────────┤
-│   ML Platform   │  Observability  │   Security      │   Storage       │
-│                 │                 │                 │                 │
-│ • Argo Workflows│ • Prometheus    │ • Keycloak      │ • MinIO         │
-│ • KServe        │ • Grafana       │ • Vault         │ • PostgreSQL    │
-│ • MLflow        │ • Loki & Tempo  │ • cert-manager  │ • Persistent    │
-│                 │ • OpenCost      │ • Istio mTLS    │   Volumes       │
-└─────────────────┴─────────────────┴─────────────────┴─────────────────┘
-                    Kubernetes (kind → cloud-ready)
+│                              Teams / Workloads                          │
+│         Wine Classifier • Fashion MNIST • BERT • Qwen-VL • RAG App      │
+├─────────────────────────────────────────────────────────────────────────┤
+│                             Platform Services                           │
+├─────────────────┬─────────────────┬─────────────────┬───────────────────┤
+│     MLOps       │   Observability │     Storage     │    GitOps         │
+│                 │                 │                 │                   │
+│ • Argo Workflows│ • Prometheus    │ • MinIO (S3)    │ • ArgoCD          │
+│ • MLflow        │ • Grafana       │ • CloudNativePG │ • Image Updater   │
+│ • KubeRay       │ • Loki & Tempo  │ • pgvector      │ • ApplicationSets │
+│ • DVC           │ • Alloy         │                 │                   │
+├─────────────────┴─────────────────┴─────────────────┴───────────────────┤
+│                          Infrastructure Layer                           │
+│          Kubernetes • Istio (Ambient) • External Secrets • Vault        │
+└─────────────────────────────────────────────────────────────────────────┘
 ```
 
-**Design Principles We're Exploring:**
+**Design Principles:**
 
-- **Research-Driven:** Documenting architectural decisions and trade-offs
-- **Cloud-Native Patterns:** Modern Kubernetes ecosystem integration
-- **GitOps-First:** Declarative infrastructure and application management
-- **Learning-Oriented:** Comprehensive documentation of the journey
+- **Layered Architecture** — Infrastructure, Platform, and Workload layers with clear boundaries
+- **Integration Coherence** — Argo ecosystem for orchestration, Ray ecosystem for ML compute
+- **Declarative Everything** — All configuration in Git, reconciled by ArgoCD
 
 ______________________________________________________________________
 
-<h2 id="repositories">📂 Project Structure</h2>
+<h2 id="repositories">📂 Repositories</h2>
 
 <details open>
-  <summary><strong>🛠️ Platform Team</strong></summary>
-  <ul>
-    <li><a href="https://github.com/opencloudhub/.github">.github</a> – Shared org templates and workflows</li>
-    <li><a href="https://github.com/opencloudhub/github-management">github-management</a> – Org automation with Terraform</li>
-    <li><a href="https://github.com/opencloudhub/docs">docs</a> – Comprehensive documentation website</li>
-    <li><a href="https://github.com/opencloudhub/infra-modules">infra-modules</a> – Reusable Terraform modules</li>
-    <li><a href="https://github.com/opencloudhub/infra-live">infra-live</a> – Live infrastructure with Terragrunt</li>
-    <li><a href="https://github.com/opencloudhub/gitops">gitops</a> – Argo CD apps and configs</li>
-    <li><a href="https://github.com/opencloudhub/gh-actions-local-runner">gh-actions-local-runner</a> – Local runner utility for GH Actions</li>
-  </ul>
+<summary><strong>🛠️ Platform Infrastructure</strong></summary>
+
+| Repository                                                                         | Description                                                                                 |
+| ---------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| [gitops](https://github.com/opencloudhub/gitops)                                   | ArgoCD configuration, app-of-apps pattern, all platform components, Argo Workflow templates |
+| [.github](https://github.com/opencloudhub/.github)                                 | Shared GitHub Actions workflows and composite actions                                       |
+| [data-registry](https://github.com/opencloudhub/data-registry)                     | DVC-versioned datasets, data pipelines, embeddings generation                               |
+| [gh-actions-local-runner](https://github.com/opencloudhub/gh-actions-local-runner) | Self-hosted GitHub Actions runner for local development                                     |
+| [k6s-testing](https://github.com/opencloudhub/k6s-testing)                         | Load testing with k6 operator, Grafana integration                                          |
+
+</details>
+
+<details open>
+<summary><strong>🤖 ML Workload Demonstrations</strong></summary>
+
+| Repository                                                                       | Framework                | Demonstrates                                            |
+| -------------------------------------------------------------------------------- | ------------------------ | ------------------------------------------------------- |
+| [ai-ml-sklearn](https://github.com/opencloudhub/ai-ml-sklearn)                   | scikit-learn             | Traditional ML, Ray joblib, full MLOps pipeline         |
+| [ai-dl-lightning](https://github.com/opencloudhub/ai-dl-lightning)               | PyTorch Lightning        | Deep learning, Ray DDP distributed training             |
+| [ai-dl-bert](https://github.com/opencloudhub/ai-dl-bert)                         | HuggingFace Transformers | DistilBERT, Ray Tune + ASHA hyperparameter optimization |
+| [ai-dl-qwen](https://github.com/opencloudhub/ai-dl-qwen)                         | Qwen2.5-VL               | Vision-language fine-tuning, GPU training, QLoRA/LoRA   |
+| [demo-app-genai-backend](https://github.com/opencloudhub/demo-app-genai-backend) | LangChain                | RAG application, prompt versioning, MLflow evaluation   |
+
 </details>
 
 <details>
-  <summary><strong>🧠 AI Team</strong></summary>
-  <ul>
-    <li><a href="https://github.com/opencloudhub/ai-ml-demo">ai-ml-demo</a> – Classical ML pipeline examples</li>
-    <li><a href="https://github.com/opencloudhub/ai-bert-demo">ai-bert-demo</a> – BERT fine-tuning workflows</li>
-    <li><a href="https://github.com/opencloudhub/ai-qwen-demo">ai-qwen-demo</a> – Qwen model experimentation</li>
-  </ul>
-</details>
+<summary><strong>🧰 Development Tools</strong></summary>
 
-<details>
-  <summary><strong>🌐 Application Team</strong></summary>
-  <ul>
-    <li><a href="https://github.com/opencloudhub/demo-app-frontend">demo-app-frontend</a> – React dashboard for model interactions</li>
-    <li><a href="https://github.com/opencloudhub/demo-app-backend">demo-app-backend</a> – FastAPI backend with model integration</li>
-    <li><a href="https://github.com/opencloudhub/landing-page">landing-page</a> – Org landing page</li>
-  </ul>
+| Repository                                                                 | Description                                                   |
+| -------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| [local-compose-setup](https://github.com/opencloudhub/local-compose-setup) | Docker Compose stack for local development without Kubernetes |
+
 </details>
 
 ______________________________________________________________________
 
-<h2 id="get-involved">🚀 Getting Started</h2>
+<h2 id="demonstrations">🎬 Demonstrations</h2>
 
-### 📚 For Researchers & Students
+The platform validates 16 functional requirements through video demonstrations:
 
-- **[📖 Full Documentation](https://opencloudhub.github.io/docs)** - Detailed setup guides and architectural decisions
-- **[🎯 Local Development](https://opencloudhub.github.io/docs/getting-started/local-setup)** - Deploy the platform on your machine
-- **[📋 Project Roadmap](https://github.com/orgs/opencloudhub/projects/4)** - See what's coming next
+| Category           | What's Demonstrated                                                   |
+| ------------------ | --------------------------------------------------------------------- |
+| **Traditional ML** | Full pipeline: GH Action → Argo Workflow → MLflow → GitOps deployment |
+| **Deep Learning**  | Distributed training with Ray DDP across multiple workers             |
+| **Transformers**   | Hyperparameter optimization with Ray Tune + ASHA scheduler            |
+| **GenAI**          | LLM serving with vLLM, RAG with prompt versioning and evaluation      |
+| **Data Pipelines** | DVC versioning, parallel pipelines, embeddings with Ray Data          |
+| **Observability**  | Grafana dashboards, distributed load testing with k6                  |
 
-### 🔍 For Platform Engineers
+______________________________________________________________________
 
-- **Explore Implementation Details:** Browse the repositories above to see real-world GitOps and IaC patterns
-- **Learn Integration Patterns:** See how modern cloud-native tools work together
-- **Contribute Ideas:** Join discussions about platform engineering approaches
-
-<!-- # TODO: add some videos here, ADJUST AND UPDATE-->
-
-### 💡 Demos
+<h2 id="quick-start">🚀 Quick Start</h2>
 
 ```bash
-# Clone and deploy locally (requires Docker & kind)
-git clone https://github.com/opencloudhub/infra-live.git
-cd infra-live/local && ./deploy.sh
+# Clone GitOps repository
+git clone https://github.com/opencloudhub/gitops.git
+cd gitops
 
-# Access MLflow UI
-kubectl port-forward -n mlflow svc/mlflow-server 5000:5000
+# Bootstrap local cluster (requires Docker, minikube or kind)
+# Follow the setup instructions and then run
+./local-development/start-dev.sh
+
+# Access platform UIs after bootstrap completes
+# - ArgoCD:        https://argocd.internal.opencloudhub.org
+# - MLflow:        https://mlflow.internal.opencloudhub.org
+# - Grafana:       https://grafana.internal.opencloudhub.org
+# - Argo Workflows: https://argo-workflows.internal.opencloudhub.org
 ```
+
+See [gitops/README.md](https://github.com/opencloudhub/gitops) for detailed setup instructions.
 
 ______________________________________________________________________
 
-## 🎓 Academic Context & Future Vision
+<h2 id="thesis">🎓 Thesis Context</h2>
 
-**Current Thesis Phase:** Building and documenting a comprehensive MLOps platform proof-of-concept
+**Research Questions:**
 
-**Research Contributions:**
+- **RQ1:** How can a scalable and traceable MLOps pipeline be designed to support both predictive and generative ML workloads? (This Org is the POC)
+- **RQ2:** What roadmap is required to evolve from proof-of-concept to production-ready system?
 
-- Integration patterns for cloud-native MLOps toolchains
-- Platform engineering approaches for AI/ML teams
-- Documentation of architectural decisions and trade-offs
+**Purpose**:
+This organisation serves as the conclusion of **RQ1**.
 
-**Future Applications:**
+**Contributions of this org:**
 
-- Foundation for university research projects requiring custom ML models and application integration
-- Template for organizations transitioning from local development to production systems
-- Personal showcase and learning resource for the cloud-native community
-- Potential baseline for SaaS offerings or consulting engagements
+1. Working MLOps platform with GitOps, experiment tracking, data versioning, and model serving
+1. Framework-agnostic validation across sklearn, PyTorch, Transformers, and LLMs
+1. GenAI workflow patterns including RAG and prompt versioning
 
 ______________________________________________________________________
 
 <div align="center">
-  <h3>🌟 Follow the Journey</h3>
-  <p><em>Building in public • Learning together • Sharing knowledge</em></p>
-
-<div>
-    <a href="https://opencloudhub.github.io/docs">
-      <img src="https://img.shields.io/badge/Read%20the%20Docs-2596BE?style=for-the-badge&logo=read-the-docs&logoColor=white" alt="Documentation">
-    </a>
-    <a href="https://github.com/orgs/opencloudhub/discussions">
-      <img src="https://img.shields.io/badge/Join%20Discussion-181717?style=for-the-badge&logo=github&logoColor=white" alt="Discussions">
-    </a>
-    <a href="https://github.com/orgs/opencloudhub/projects/4">
-      <img src="https://img.shields.io/badge/View%20Roadmap-0052CC?style=for-the-badge&logo=jira&logoColor=white" alt="Roadmap">
-    </a>
-  </div>
+  <p><em>Open-source • Self-hostable • Privacy-preserving</em></p>
+  <a href="https://github.com/opencloudhub/gitops">
+    <img src="https://img.shields.io/badge/Start%20Here-GitOps%20Repo-blue?style=for-the-badge&logo=github" alt="Start Here">
+  </a>
 </div>
