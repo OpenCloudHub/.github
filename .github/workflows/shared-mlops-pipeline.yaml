@@ -233,6 +233,8 @@ jobs:
                 value: "_"
               - name: secret_refs
                 value: "minio-tenant-secret"
+              - name: mlflow_tracking_uri
+                value: "http://mlflow.mlops.svc.cluster.local:80"
           EOF
 
           # Get the actual workflow name
