@@ -229,6 +229,10 @@ jobs:
                 value: "${{ inputs.training_entrypoint }}"
               - name: training_args
                 value: "${{ inputs.training_args }}"
+              - name: extra_env
+                value: "_"
+              - name: secret_refs
+                value: "minio-tenant-secret"
           EOF
 
           # Get the actual workflow name
