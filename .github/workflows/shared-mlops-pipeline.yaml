@@ -229,12 +229,6 @@ jobs:
                 value: "${{ inputs.training_entrypoint }}"
               - name: training_args
                 value: "${{ inputs.training_args }}"
-              - name: extra_env
-                value: "_"
-              - name: secret_refs
-                value: "minio-tenant-secret"
-              - name: mlflow_tracking_uri
-                value: "http://mlflow.mlops.svc.cluster.local:80"
           EOF
 
           # Get the actual workflow name
