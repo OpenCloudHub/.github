@@ -35,7 +35,7 @@ ______________________________________________________________________
 
 <h2 id="overview">📖 Overview</h2>
 
-OpenCloudHub is an open-source, self-hostable MLOps platform developed as part of a master's thesis. It demonstrates how to build infrastructure for divers machine learning and AI workflows using cloud-native technologies—all deployable on institution-controlled infrastructure for data sovereignty.
+OpenCloudHub is an open-source, self-hostable MLOps platform developed as part of a master's thesis. It demonstrates how to build infrastructure for machine learning and AI workflows using cloud-native technologies—all deployable on institution-controlled infrastructure for data sovereignty.
 
 **Key Characteristics:**
 
