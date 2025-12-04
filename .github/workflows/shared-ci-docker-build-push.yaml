@@ -155,6 +155,6 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=registry,ref=${{ env.DOCKER_REPO }}:buildcache
-          cache-to: type=registry,ref=${{ env.DOCKER_REPO }}:buildcache,mode=max  # Add this
+          cache-to: type=registry,ref=${{ env.DOCKER_REPO }}:buildcache,mode=max 
           provenance: false
           sbom: false
