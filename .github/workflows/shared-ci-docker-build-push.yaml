@@ -113,20 +113,20 @@ jobs:
             type=sha,prefix={{branch}}-
             type=raw,value=latest,enable={{is_default_branch}}
 
-      - name: 🐳 Build image
-        uses: docker/build-push-action@v6
-        with:
-          context: ${{ inputs.context }}
-          file: ${{ inputs.context }}/${{ inputs.dockerfile }}
-          target: ${{ inputs.target }}
-          build-args: ${{ inputs.build-args }}
-          load: true # Load locally for scanning
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=registry,ref=${{ env.DOCKER_REPO }}:buildcache
-          cache-to: type=registry,ref=${{ env.DOCKER_REPO }}:buildcache,mode=max
-          provenance: false
-          sbom: false
+      # - name: 🐳 Build image
+      #   uses: docker/build-push-action@v6
+      #   with:
+      #     context: ${{ inputs.context }}
+      #     file: ${{ inputs.context }}/${{ inputs.dockerfile }}
+      #     target: ${{ inputs.target }}
+      #     build-args: ${{ inputs.build-args }}
+      #     load: true # Load locally for scanning
+      #     tags: ${{ steps.meta.outputs.tags }}
+      #     labels: ${{ steps.meta.outputs.labels }}
+      #     cache-from: type=registry,ref=${{ env.DOCKER_REPO }}:buildcache
+      #     cache-to: type=registry,ref=${{ env.DOCKER_REPO }}:buildcache,mode=max
+      #     provenance: false
+      #     sbom: false
 
       # - name: 🔍 Scan built image for vulnerabilities
       #   uses: aquasecurity/trivy-action@master
@@ -155,5 +155,6 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=registry,ref=${{ env.DOCKER_REPO }}:buildcache
+          cache-to: type=registry,ref=${{ env.DOCKER_REPO }}:buildcache,mode=max  # Add this
           provenance: false
           sbom: false
