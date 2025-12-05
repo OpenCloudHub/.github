@@ -87,7 +87,7 @@ on:
 jobs:
   build-and-scan:
     name: 🏗️ Build & Security Scan
-    runs-on: arc-runner-set # or: self-hosted or whatever runner you want
+    runs-on: ci-builder # or: self-hosted or whatever runner you want
     env:
       DOCKER_REPO: ${{ secrets.DOCKER_USERNAME }}/${{ inputs.repo-name }}
     steps:
