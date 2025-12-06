@@ -63,7 +63,7 @@ on:
 
 jobs:
   test:
-    name: 🧪 Test Suite
+    name: "🧪 Test (Python ${{ inputs.python-version }})"
     runs-on: ubuntu-latest
     defaults:
       run:
