@@ -142,7 +142,7 @@ on:
 
 jobs:
   submit-workflow:
-    name: 🚀 Submit ML Lifecycle Workflow
+    name: "🚀 Train ${{ inputs.model_name }}"
     runs-on: arc-runner-set
     steps:
       # =========================================================================
