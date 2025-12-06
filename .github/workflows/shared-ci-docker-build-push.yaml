@@ -86,7 +86,7 @@ on:
 
 jobs:
   build-and-scan:
-    name: 🏗️ Build & Security Scan
+    name: "🏗️ Build ${{ inputs.repo-name }}"
     runs-on: ci-builder # or: self-hosted or whatever runner you want
     env:
       DOCKER_REPO: ${{ secrets.DOCKER_USERNAME }}/${{ inputs.repo-name }}
