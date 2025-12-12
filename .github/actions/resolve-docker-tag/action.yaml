@@ -150,11 +150,11 @@ runs:
         # Function to get manifest digest
         get_digest() {
           local tag=$1
-          curl -s \
+          curl -s -I \
             -H "Authorization: Bearer ${TOKEN}" \
-            -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
+            -H "Accept: application/vnd.docker.distribution.manifest.v2+json, application/vnd.oci.image.manifest.v1+json" \
             "${REGISTRY_URL}/${REPO}/manifests/${tag}" \
-            | jq -r '.config.digest // empty'
+            | grep -i "docker-content-digest" | awk '{print $2}' | tr -d '\r'
         }
 
         # Function to check if tag exists
